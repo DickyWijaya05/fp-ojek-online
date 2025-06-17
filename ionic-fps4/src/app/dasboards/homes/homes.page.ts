@@ -23,6 +23,8 @@ export class HomesPage implements OnInit {
         const localUser = localStorage.getItem('user');
         this.user = localUser ? JSON.parse(localUser) : null;
       }
+            // Debug log untuk cek apakah data driver berhasil diambil
+      console.log('✅ Driver data:', this.user);
     });
   }
 

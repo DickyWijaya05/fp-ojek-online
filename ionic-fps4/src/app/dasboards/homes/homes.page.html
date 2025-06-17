@@ -1,9 +1,12 @@
 <ion-content class="dashboards-content">
   <div class="header-bg"></div>
 
-  <div class="profile-section">
-    <img src="assets/Profile.png" alt="Profile" class="profile-image" />
-    <h2 class="greeting">Hallo,<br /><strong>Pak Ustadz</strong></h2>
+  <div class="profile-section" *ngIf="user">
+    <img [src]="user.photo_url || 'assets/Profile.png'" alt="Profile" class="profile-image" />
+    <h2 class="greeting">
+      Hallo,<br />
+      <strong>{{ user.name || 'Driver' }}</strong>
+    </h2>
     <p class="subtitle">Mau kemana nih?</p>
     <ion-button class="location-button" expand="block" shape="round" (click)="goToLokasi()">
       Klik disini buat tau lokasi kamu

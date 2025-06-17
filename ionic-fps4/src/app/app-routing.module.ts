@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login', // ← Awal buka langsung ke halaman login
+    redirectTo: 'landing-page-login', // ← Awal buka langsung ke halaman login
     pathMatch: 'full'
   },
   {
@@ -111,6 +111,14 @@ const routes: Routes = [
   {
     path: 'user-tracking',
     loadChildren: () => import('./dasboard/user-tracking/user-tracking.module').then( m => m.UserTrackingPageModule)
+  },
+  {
+    path: 'landing-page-login',
+    loadChildren: () => import('./landing-page-login/landing-page-login.module').then( m => m.LandingPageLoginPageModule)
+  },
+  {
+    path: 'login-option',
+    loadChildren: () => import('./login-option/login-option.module').then( m => m.LoginOptionPageModule)
   }
 ];
 

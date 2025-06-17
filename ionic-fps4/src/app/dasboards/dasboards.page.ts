@@ -13,3 +13,4 @@ export class DasboardsPage {
     addIcons({ library, playCircle, radio, search });
   }
 }
+ 

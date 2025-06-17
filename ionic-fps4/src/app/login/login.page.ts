@@ -52,21 +52,21 @@ export class LoginPage {
 }
 
 
-  async loginWithGoogle() {
-    try {
-      const user = await this.authService.loginWithGoogle();
-      console.log('Login Google berhasil:', user);
-      if (user) {
-        this.router.navigateByUrl('/dasboard');
-      }
-    } catch (error) {
-      console.error('Login Google gagal:', error);
-      alert('Login Google gagal, coba lagi.');
-    }
-  }
+//   async loginWithGoogle() {
+//     try {
+//       const user = await this.authService.loginWithGoogle();
+//       console.log('Login Google berhasil:', user);
+//       if (user) {
+//         this.router.navigateByUrl('/dasboard');
+//       }
+//     } catch (error) {
+//       console.error('Login Google gagal:', error);
+//       alert('Login Google gagal, coba lagi.');
+//     }
+//   }
 
 
-  goToRegister() {
-    this.router.navigateByUrl('/register-option');
-  }
+//   goToRegister() {
+//     this.router.navigateByUrl('/register-option');
+//   }
 }

@@ -7,6 +7,10 @@
   min-height: 100vh;
   padding: 20px;
 }
+.custom-toolbar {
+  --background: #fddf5c; // warna kuning
+  --color: #000;         // teks hitam
+}
 
 .logo-container {
   display: flex;

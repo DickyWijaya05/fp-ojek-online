@@ -1,3 +1,13 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login-option"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Login Driver</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
 <ion-content class="ion-padding custom-background">
 
   <!-- Logo -->
@@ -30,19 +40,6 @@
 <ion-button expand="block" shape="round" class="login-button" (click)="loginWithEmail()" [disabled]="!email || !password">
   Login
 </ion-button>
-
-
-  <!-- Tombol Login dengan Google -->
-  <ion-button expand="block" shape="round" class="social-button google" (click)="loginWithGoogle()">
-    <img src="assets/Google.png" class="custom-icon" alt="Google" slot="start" />
-    Continue with Google
-  </ion-button>
-
- 
-  <!-- Tombol Daftar -->
-  <ion-button expand="block" shape="round" class="outline-button" (click)="goToRegister()">
-    Daftar Nih
-  </ion-button>
 
   <!-- Footer -->
   <div class="footer-text">
