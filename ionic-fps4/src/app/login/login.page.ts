@@ -21,35 +21,35 @@ export class LoginPage {
 
   //login dengan email
   loginWithEmail() {
-  this.authService.loginWithEmail(this.email, this.password).subscribe({
-    next: (res) => {
-      const user = res.user;
-      const token = res.token;
+    this.authService.loginWithEmail(this.email, this.password).subscribe({
+      next: (res) => {
+        const user = res.user;
+        const token = res.token;
 
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
 
-      // Arahkan ke dashboard berdasarkan level_id
-      if (user.level_id === 2) {
-        this.router.navigateByUrl('/dasboards'); // untuk driver
-      } else if (user.level_id === 3) {
-        this.router.navigateByUrl('/dasboard'); // untuk penumpang
-      } else {
-        alert('Level pengguna tidak dikenali.');
+        // Arahkan ke dashboard berdasarkan level_id
+        if (user.level_id === 2) {
+          this.router.navigateByUrl('/dasboards'); // untuk driver
+        } else if (user.level_id === 3) {
+          this.router.navigateByUrl('/dasboard'); // untuk penumpang
+        } else {
+          alert('Level pengguna tidak dikenali.');
+        }
+      },
+      error: (err) => {
+        console.error('Login gagal:', err);
+        if (err.status === 403 && err.error?.message) {
+          alert(err.error.message); // tampilkan pesan dari Laravel
+        } else if (err.status === 404) {
+          alert('Email belum terdaftar.');
+        } else {
+          alert('Login gagal. Email atau password salah.');
+        }
       }
-    },
-    error: (err) => {
-      console.error('Login gagal:', err);
-       if (err.status === 403 && err.error?.message) {
-    alert(err.error.message); // tampilkan pesan dari Laravel
-  } else if (err.status === 404) {
-    alert('Email belum terdaftar.');
-  } else {
-    alert('Login gagal. Email atau password salah.');
+    });
   }
-}
-  });
-}
 
 
   async loginWithGoogle() {
@@ -65,8 +65,21 @@ export class LoginPage {
     }
   }
 
-
   goToRegister() {
     this.router.navigateByUrl('/register-option');
+  }
+
+  ionViewDidEnter() {
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 150);
+  }
+
+  handleRefresh(event: any) {
+    // Simulasikan proses refresh, misalnya 1 detik
+    setTimeout(() => {
+      window.location.reload();  // reload halaman
+      event.target.complete();   // hentikan indikator loading
+    }, 1000);
   }
 }

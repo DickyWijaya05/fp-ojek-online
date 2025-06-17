@@ -1,41 +1,122 @@
 .custom-background {
-  --background: #fddf5c;
+  --background: #fddf5c; // warna latar kuning
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 20px;
 }
+
+ion-refresher {
+  --background: transparent;
+  background: transparent !important;
+}
+
+ion-refresher-content {
+  --background: transparent;
+  background: transparent !important;
+
+  color: #333;
+  /* warna teks */
+  --spinner-color: #333;
+  /* warna spinner */
+
+  text-align: center;
+}
+
 
 .logo-container {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 100px;
 }
 
-.logo-image { 
-  width: 100px;
-  height: 100px;
+.logo-image {
+  width: 200px;
+  height: 200px;
   object-fit: contain;
   border-radius: 50%;
-  border: 2px solid #000;
 }
 
 .title {
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 32px;
+  font-size: 35px;
   text-align: center;
-  margin-top: 30px;
-  color: #000;
+  margin-top: 5px;
+  color: #000
 }
 
 .subtitle {
-  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   text-align: center;
+  color: #000000;
+  margin-bottom: 50px;
+}
+
+.social-button {
+  border-radius: 30px;
+  margin-bottom: 20px;
+  margin-top: 50px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 48px;
+  color: #000;
+  --background: #ffffff;
+  --border-color: #000;
+  border: 3px solid black;
+  text-transform: none;
+  font-weight: 500;
+}
+
+.google {
+  font-weight: bold;
+  text-align: left;
+  --color: #000;
+}
+
+.outline-button {
+  --background: #fff;
+  border: 1.5px solid #000;
+  border-radius: 30px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 48px;
+  color: #000;
+  text-transform: none;
+  font-weight: 500;
+  margin-top: 15px;
+  border: 3px solid black;
+  font-weight: bold;
+}
+
+.login-button {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  --background: #197C34;
+  color: #fddf5c;
+  border-radius: 30px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 48px;
+  margin-top: 15px;
+  text-transform: none;
+}
+
+.footer-text {
+  margin-top: 30px;
+  font-size: 12px;
   color: #333;
-  margin-bottom: 40px;
+  text-align: center;
+}
+
+.custom-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 5px;
+  border-radius: 50%;
 }
 
 ion-item {
@@ -52,53 +133,4 @@ ion-label {
 
 ion-input {
   color: #000;
-}
-
-.login-button {
-  --background: #04221B;
-  color: #fddf5c;
-  border-radius: 30px;
-  margin-top: 12px;
-  text-transform: none;
-  border: 3px solid #000;
-  font-weight: bold;
-}
-
-.social-button {
-  border-radius: 30px;
-  margin-top: 20px;
-  color: #000;
-  --background: #ffffff;
-  border: 3px solid black;
-  text-transform: none;
-  font-weight: 600;
-}
-
-.google {
-  --color: #000;
-  text-align: left;
-}
-
-.outline-button {
-  --background: #fff;
-  border: 3px solid #000;
-  border-radius: 30px;
-  color: #000;
-  text-transform: none;
-  font-weight: bold;
-  margin-top: 30px;
-}
-
-.footer-text {
-  margin-top: 40px;
-  font-size: 12px;
-  color: #333;
-  text-align: center;
-}
-
-.custom-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
-  vertical-align: middle;
 }

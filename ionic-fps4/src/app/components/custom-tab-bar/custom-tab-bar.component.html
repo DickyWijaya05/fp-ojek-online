@@ -1,22 +1,23 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom" class="tab-bar">
-    <ion-tab-button routerLink="/dasboard/home" routerLinkActive="active-tab" expand="block"><ion-icon
-        name="home"></ion-icon><ion-label>Home</ion-label></ion-tab-button>
+  <ion-tab-bar slot="bottom" class="custom-tab-bar">
+    <ion-tab-button routerLink="/dasboard/home" routerLinkActive="active-tab" [class.selected]="selectedTab === 'home'" (click)="setSelectedTab('home')">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
 
-    <ion-tab-button routerLink="/dasboard/activity" routerLinkActive="active-tab" expand="block">
+    <ion-tab-button routerLink="/dasboard/activity" routerLinkActive="active-tab" [class.selected]="selectedTab === 'activity'" (click)="setSelectedTab('activity')">
       <ion-icon name="document-text"></ion-icon>
       <ion-label>Activity</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button routerLink="/dasboard/account" routerLinkActive="active-tab" expand="block">
+    <ion-tab-button routerLink="/dasboard/account" routerLinkActive="active-tab" [class.selected]="selectedTab === 'account'" (click)="setSelectedTab('account')">
       <ion-icon name="person-sharp"></ion-icon>
       <ion-label>Account</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button routerLink="/dasboard/chat" routerLinkActive="active-tab" expand="block">
+    <ion-tab-button routerLink="/dasboard/chat" routerLinkActive="active-tab" [class.selected]="selectedTab === 'chat'" (click)="setSelectedTab('chat')">
       <ion-icon name="chatbubble-ellipses"></ion-icon>
       <ion-label>Chat</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
-
