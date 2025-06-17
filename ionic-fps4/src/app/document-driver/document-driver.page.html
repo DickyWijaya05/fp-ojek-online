@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="registers"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Upload Dokumen Driver</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="custom-background">
+  <form (ngSubmit)="submitDocuments()" class="page-container">
+
+    <div class="form-section">
+
+      <label class="form-label">Nama / Merk Kendaraan</label>
+      <ion-item class="input-item">
+        <ion-input [(ngModel)]="vehicleName" name="vehicleName" placeholder="Contoh: Honda Beat"></ion-input>
+      </ion-item>
+
+      <label class="form-label">Jenis Kendaraan</label>
+      <ion-item class="input-item">
+        <ion-select [(ngModel)]="vehicleType" name="vehicleType" placeholder="Pilih jenis kendaraan">
+          <ion-select-option value="motor">Motor</ion-select-option>
+          <ion-select-option value="mobil">Mobil</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <label class="form-label">Foto KTP</label>
+      <ion-item class="input-item">
+        <input type="file" (change)="onFileChange($event, 'ktp')" accept="image/*" />
+      </ion-item>
+
+      <label class="form-label">Foto SIM</label>
+      <ion-item class="input-item">
+        <input type="file" (change)="onFileChange($event, 'sim')" accept="image/*" />
+      </ion-item>
+
+      <label class="form-label">Pas Foto</label>
+      <ion-item class="input-item">
+        <input type="file" (change)="onFileChange($event, 'pas_photo')" accept="image/*" />
+      </ion-item>
+
+      <label class="form-label">Foto STNK</label>
+      <ion-item class="input-item">
+        <input type="file" (change)="onFileChange($event, 'stnk')" accept="image/*" />
+      </ion-item>
+
+      <label class="form-label">Foto Kendaraan</label>
+      <ion-item class="input-item">
+        <input type="file" (change)="onFileChange($event, 'vehicle_photo')" accept="image/*" />
+      </ion-item>
+
+      <label class="form-label">Foto Selfie dengan KTP</label>
+      <ion-item class="input-item">
+        <input type="file" (change)="onFileChange($event, 'selfie_ktp')" accept="image/*" />
+      </ion-item>
+
+      <div class="button-wrapper">
+        <ion-button expand="block" type="submit">
+          Kirim Dokumen
+        </ion-button>
+      </div>
+
+    </div>
+
+  </form>
+</ion-content>

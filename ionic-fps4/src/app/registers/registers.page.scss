@@ -1,0 +1,110 @@
+.custom-background {
+  --background: #fcd949;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+.custom-toolbar {
+  --background: #fddf5c; /* warna kuning */
+  --color: #000;         /* teks hitam */
+}
+
+.form-section {
+  width: 90%;
+}
+
+.form-label {
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  display: block;
+  color: #000;
+}
+
+.input-item {
+  border-radius: 15px;
+  padding: 10px;
+  color: #000000;
+  --background: #ffffff !important;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-item:focus-within {
+  border: 1px solid #197C34;
+  box-shadow: 0 0 0 2px rgba(25, 124, 52, 0.2);
+}
+
+.small-flag {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.small-flag img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid black;
+}
+
+.button-wrapper {
+  width: 90%;
+  margin-top: 20px;
+}
+
+.continue-button {
+  --background: #197C34;
+  color: #fddf5c;
+  border-radius: 30px;
+  margin-top: 20px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 48px;
+  text-transform: none;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+ion-icon {
+  color: #000 !important;
+}
+
+ion-label, ion-input, ion-item, ion-select {
+  color: #000 !important;
+}
+
+// Tangkal dark mode default
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-text-color: #000;
+    --ion-item-color: #000;
+    --ion-color-step-850: #000;
+    --ion-background-color: #fcd949;
+  }
+
+  ion-label, ion-input, ion-select, ion-item, ion-icon {
+    color: #000 !important;
+  }
+
+  ion-input::part(native),
+  ion-select::part(text) {
+    color: #000 !important;
+  }
+}
+
+// Responsif layar kecil
+@media screen and (max-width: 360px) {
+  .form-section,
+  .button-wrapper {
+    width: 95%;
+  }
+}

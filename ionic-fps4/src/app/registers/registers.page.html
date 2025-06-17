@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/register-option"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Isi Data Diri Anda</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding custom-background" fullscreen scroll="true">
+  <div class="page-container">
+    <!-- Form -->
+    <div class="form-section">
+
+      <!-- Full Name -->
+      <ion-label class="form-label">Nama Lengkap</ion-label>
+      <ion-item class="input-item">
+        <ion-input type="text" placeholder="Full name" [(ngModel)]="fullName" required></ion-input>
+      </ion-item>
+
+      <!-- Email -->
+      <ion-label class="form-label">Email</ion-label>
+      <ion-item class="input-item">
+        <ion-icon slot="start" name="mail-unread-outline"></ion-icon>
+        <ion-input placeholder="Email" type="email" [(ngModel)]="email" required></ion-input>
+      </ion-item>
+
+      <!-- Phone Number -->
+      <ion-label class="form-label">Nomor Telepon</ion-label>
+      <ion-item class="input-item">
+        <ion-avatar slot="start" class="small-flag">
+          <img src="assets/id.png" alt="id" />
+        </ion-avatar>
+        <ion-input placeholder="Masukkan nomor telepon" type="tel" [(ngModel)]="phone" required></ion-input>
+      </ion-item>
+
+      <!-- Password -->
+      <ion-label class="form-label">Password</ion-label>
+      <ion-item class="input-item">
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          [(ngModel)]="password"
+          required>
+        </ion-input>
+        <ion-icon
+          slot="end"
+          [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+          (click)="togglePasswordVisibility()"
+          style="cursor: pointer;">
+        </ion-icon>
+      </ion-item>
+
+      <!-- Confirm Password -->
+      <ion-label class="form-label">Konfirmasi Password</ion-label>
+      <ion-item class="input-item">
+        <ion-input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          placeholder="Konfirmasi Password"
+          [(ngModel)]="confirmPassword"
+          required>
+        </ion-input>
+        <ion-icon
+          slot="end"
+          [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
+          (click)="toggleConfirmPasswordVisibility()"
+          style="cursor: pointer;">
+        </ion-icon>
+      </ion-item>
+
+    </div>
+
+    <!-- Continue Button -->
+    <div class="button-wrapper">
+      <ion-button expand="block" shape="round" class="continue-button" (click)="onContinue()">
+        Continue
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

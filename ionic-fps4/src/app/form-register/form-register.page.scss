@@ -1,0 +1,146 @@
+.custom-background {
+  --background: #fcd949;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+.custom-toolbar {
+  --background: #fddf5c; // warna kuning
+  --color: #000;         // teks hitam
+}
+
+.form-section {
+  width: 90%;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  display: block;
+  color: #000;
+}
+
+.input-item {
+  border-radius: 15px;
+  padding: 10px;
+  --background: #ffffff !important;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.id {
+  border: 1px solid black;
+}
+
+.small-flag {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.small-flag img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.button-wrapper {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.continue-button {
+  --background: #197C34;
+  color: #fddf5c;
+  border-radius: 40px;
+  margin-top: 20px;
+  width: 100% !important;
+  min-height: 48px;
+  text-transform: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+// Google button style
+.social-button {
+  border-radius: 30px;
+  margin-top: 20px;
+  color: #000;
+  --background: #ffffff;
+  --border-color: #000;
+  border: 4px solid black;
+  text-transform: none;
+  font-weight: 500;
+}
+
+.google {
+  font-weight: bold;
+  --color: #000;
+}
+
+.custom-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+
+:root {
+  --ion-text-color: #000;
+  --ion-color-step-850: #000;
+  --ion-item-color: #000;
+}
+
+ion-label,
+ion-input,
+ion-select,
+ion-item,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span {
+  color: #000 !important;
+}
+
+ion-select::part(text),
+ion-input::part(native) {
+  color: #000 !important;
+}
+
+ion-icon {
+  color: #000 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-text-color: #000;
+    --ion-item-color: #000;
+    --ion-color-step-850: #000;
+  }
+
+  ion-label,
+  ion-input,
+  ion-select,
+  ion-item,
+  ion-icon {
+    color: #000 !important;
+  }
+
+  ion-select::part(text),
+  ion-input::part(native) {
+    color: #000 !important;
+  }
+}

@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Daftar sebagai</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding custom-bg">
+  <div class="role-selection-container">
+    <ion-card button class="role-card" (click)="pilihPeran('pengemudi')">
+      <ion-item lines="none" color="success">
+        <ion-icon name="car-outline" slot="start"></ion-icon>
+        <ion-label>Pengemudi</ion-label>
+      </ion-item>
+    </ion-card>
+
+    <ion-card button class="role-card" (click)="pilihPeran('penumpang')">
+      <ion-item lines="none" color="success">
+        <ion-icon name="person-outline" slot="start"></ion-icon>
+        <ion-label>Penumpang</ion-label>
+      </ion-item>
+    </ion-card>
+  </div>
+</ion-content>

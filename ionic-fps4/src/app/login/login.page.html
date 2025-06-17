@@ -1,0 +1,52 @@
+<ion-content class="ion-padding custom-background">
+
+  <!-- Logo -->
+  <div class="logo-container">
+    <img src="assets/Logo.png" alt="Logo" class="logo-image" />
+  </div>
+
+  <!-- Judul -->
+  <h1 class="title">Let’s Get Started!!</h1>
+  <p class="subtitle">Yokk ahh Login dulu</p>
+
+<!-- Form Login -->
+  <ion-item>
+    <ion-label position="floating">Email</ion-label>
+    <ion-input [(ngModel)]="email" type="email" placeholder="you@example.com"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Password</ion-label>
+    <ion-input [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••"></ion-input>
+    <ion-icon
+    slot="end"
+    [name]="showPassword ? 'eye-off' : 'eye'"
+    (click)="togglePasswordVisibility()"
+    class="password-icon">
+  </ion-icon>
+  </ion-item>
+
+  <!-- Tombol Login -->
+<ion-button expand="block" shape="round" class="login-button" (click)="loginWithEmail()" [disabled]="!email || !password">
+  Login
+</ion-button>
+
+
+  <!-- Tombol Login dengan Google -->
+  <ion-button expand="block" shape="round" class="social-button google" (click)="loginWithGoogle()">
+    <img src="assets/Google.png" class="custom-icon" alt="Google" slot="start" />
+    Continue with Google
+  </ion-button>
+
+ 
+  <!-- Tombol Daftar -->
+  <ion-button expand="block" shape="round" class="outline-button" (click)="goToRegister()">
+    Daftar Nih
+  </ion-button>
+
+  <!-- Footer -->
+  <div class="footer-text">
+    <small>Privacy Policy | Terms of Service</small>
+  </div>
+
+</ion-content>

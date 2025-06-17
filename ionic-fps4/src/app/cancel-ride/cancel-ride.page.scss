@@ -1,0 +1,69 @@
+.custom-content {
+  --background: #ffde59;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .header-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    .close-btn {
+      --color: black;
+      font-size: 20px;
+    }
+
+    .page-title {
+      flex: 1;
+      text-align: center;
+      margin-right: 32px;
+      font-size: 20px;
+      font-weight: bold;
+      color: black;
+    }
+  }
+
+  .reason-title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: black;
+  }
+
+  .reason-list {
+    background: none;
+    margin-bottom: 32px;
+
+    .reason-item {
+      --background: none;
+      --inner-padding-end: 0;
+      --padding-start: 0;
+      color: black;
+
+      ion-radio {
+        --color: #007f3f;
+        margin-right: 10px;
+      }
+
+      ion-label {
+        font-size: 17px;
+        color: black;
+      }
+    }
+  }
+
+  .ok-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    --background: #197C34;
+    color: #fddf5c;
+    border-radius: 30px;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 48px;
+    margin-top: 315px;
+    text-transform: none;
+  }
+}

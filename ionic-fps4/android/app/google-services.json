@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "437748340885",
+    "project_id": "go-cabs-a0d81",
+    "storage_bucket": "go-cabs-a0d81.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:437748340885:android:3b8848865ca0438dbfa39c",
+        "android_client_info": {
+          "package_name": "com.gocabs.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "437748340885-soff0mud87ri998mthgpiscd70jgof76.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXAozokfHDiAO6IY3obWC5gqQE40nlUag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "437748340885-soff0mud87ri998mthgpiscd70jgof76.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

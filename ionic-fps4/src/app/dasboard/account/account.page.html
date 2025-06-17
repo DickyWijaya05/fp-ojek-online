@@ -1,0 +1,59 @@
+<ion-content class="ion-padding custom-background" fullscreen>
+  <div class="page-container">
+
+    <!-- Header -->
+    <div class="profile-header">
+      <h1 class="title">Profile</h1>
+    </div>
+
+    <!-- Foto profil + ikon edit  ➜ semuanya di kiri, ikon menumpuk -->
+    <div class="avatar-wrapper">
+      <ion-avatar class="profile-avatar">
+        <img src="assets/Profile.png" alt="profile" />
+        <!-- ikon edit menumpuk di pojok kanan-bawah avatar -->
+        <ion-button class="edit-icon" fill="solid" size="small">
+          <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+        </ion-button>
+      </ion-avatar>
+    </div>
+
+    <!-- Informasi profil -->
+    <div class="form-section">
+
+      <!-- Nama -->
+      <ion-label class="form-label">Nama</ion-label>
+      <ion-item class="input-item">
+        <ion-input readonly value="Andrew Silalahi"></ion-input>
+      </ion-item>
+
+      <!-- Email -->
+      <ion-label class="form-label">Email</ion-label>
+      <ion-item class="input-item">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-input readonly value="AndrewSilalahi@Gmail.com"></ion-input>
+      </ion-item>
+
+      <!-- Phone -->
+      <ion-label class="form-label">Phone Number</ion-label>
+      <ion-item class="input-item phone-input">
+        <ion-avatar slot="start" class="small-flag">
+          <img src="assets/id.png" alt="id" />
+        </ion-avatar>
+        <ion-icon name="chevron-down-outline" slot="start" class="chevron-icon"></ion-icon>
+        <ion-input readonly value="+62 085760136913"></ion-input>
+      </ion-item>
+
+      <!-- Gender -->
+      <ion-label class="form-label">Gender</ion-label>
+      <ion-item class="input-item">
+        <ion-input readonly value="Male"></ion-input>
+      </ion-item>
+
+      <!-- Date of Birth -->
+      <ion-label class="form-label">Date of Birth</ion-label>
+      <ion-item class="input-item">
+        <ion-input readonly value="12 - 27 - 1945"></ion-input>
+        <ion-icon name="calendar-outline" slot="end"></ion-icon>
+      </ion-item>
+
+    </div>

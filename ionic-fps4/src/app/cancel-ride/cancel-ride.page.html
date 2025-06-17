@@ -1,0 +1,29 @@
+<ion-content class="ion-padding custom-content">
+  <div class="header-area">
+    <ion-button fill="clear" class="close-btn" (click)="dismiss()">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+    <h1 class="page-title">Cancel Ride</h1>
+  </div>
+
+  <h2 class="reason-title">Kenapani kamu cancel?</h2>
+
+  <ion-list class="reason-list">
+    <ion-radio-group [(ngModel)]="selectedReason">
+      <ion-item *ngFor="let reason of reasons" lines="none" class="reason-item">
+        <ion-radio slot="start" [value]="reason"></ion-radio>
+        <ion-label>{{ reason }}</ion-label>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="6">
+        <ion-button expand="block" fill="solid" shape="round" (click)="confirmCancel()" class="ok-btn">
+          Confirm
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

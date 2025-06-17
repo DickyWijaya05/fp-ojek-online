@@ -1,0 +1,7 @@
+{
+  "name": "ProjectApkTai",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

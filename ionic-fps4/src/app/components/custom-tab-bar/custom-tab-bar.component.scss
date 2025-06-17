@@ -1,0 +1,29 @@
+.tab-bar {
+  --background: #ffde59;
+  --color: #666;
+  --color-selected: #007f3f;
+
+  border-top: 1px solid black;
+  padding: 25px 0;
+
+  /* Tambahkan shadow di bagian atas tab bar */
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.2);
+
+  ion-tab-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ion-icon {
+    font-size: 25px;
+    margin-bottom: 4px;
+  }
+
+  ion-label {
+    color: black;
+    font-weight: bold;
+    font-size: 14px;
+  }
+}

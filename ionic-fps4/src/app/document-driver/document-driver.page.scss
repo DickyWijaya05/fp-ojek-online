@@ -1,0 +1,101 @@
+.custom-background {
+  --background: #fcd949;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+.custom-toolbar {
+  --background: #fddf5c; // warna kuning
+  --color: #000;         // teks hitam
+}
+
+.form-section {
+  width: 90%;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  display: block;
+  color: #000;
+}
+
+.input-item,
+ion-input,
+ion-select {
+  border-radius: 12px;
+  padding: 10px;
+  --background: #fff !important;
+  background-color: #fff;
+  color: #000 !important;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+ion-select::part(text),
+ion-input::part(native) {
+  color: #000 !important;
+}
+
+.upload-label {
+  margin-top: 16px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #000;
+}
+
+.file-input {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.button-wrapper {
+  margin-top: 24px;
+  width: 100%;
+}
+
+.submit-button {
+  --background: #197C34;
+  color: #fddf5c;
+  border-radius: 40px;
+  width: 100%;
+  height: 48px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+ion-label,
+ion-item,
+h1, h2, h3, h4, h5, h6,
+p, span {
+  color: #000 !important;
+}
+
+ion-icon {
+  color: #000 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-text-color: #000;
+    --ion-item-color: #000;
+  }
+
+  ion-label,
+  ion-input,
+  ion-select,
+  ion-item,
+  ion-icon {
+    color: #000 !important;
+  }
+}

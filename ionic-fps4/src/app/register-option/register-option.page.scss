@@ -1,0 +1,21 @@
+.custom-toolbar {
+  --background: #fddf5c; /* warna kuning */
+  --color: #000;         /* teks hitam */
+}
+
+.custom-bg {
+  --background: #fddf5c; /* latar belakang kuning juga */
+}
+
+.role-selection-container {
+  margin-top: 10px; /* Jarak dari atas agar tidak terlalu rapat */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.role-card {
+  --background: #007f3f;     /* hijau gelap */
+  --color: #fff;             /* teks putih */
+  border-radius: 15px;
+}
