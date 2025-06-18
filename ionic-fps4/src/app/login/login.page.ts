@@ -50,6 +50,13 @@ export class LoginPage {
       }
     });
   }
+  // ✅ Tambahkan ini untuk mengatasi error ionRefresh
+  handleRefresh(event: any) {
+    setTimeout(() => {
+      console.log('Halaman direfresh');
+      event.target.complete();
+    }, 1000);
+  }
 
 
 //   async loginWithGoogle() {
