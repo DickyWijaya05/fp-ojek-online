@@ -64,7 +64,7 @@ export class LoginPage {
 //       alert('Login Google gagal, coba lagi.');
 //     }
 //   }
-
+ 
 
 //   goToRegister() {
 //     this.router.navigateByUrl('/register-option');
