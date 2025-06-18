@@ -4,12 +4,9 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
-  signInWithPhoneNumber,
-  ConfirmationResult,
-  RecaptchaVerifier,
-  User,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  User
 } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 import { firebaseConfig } from './firebase.config';
@@ -21,9 +18,6 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   user = new BehaviorSubject<any | null>(null);
-  private confirmationResult?: ConfirmationResult;
-  recaptchaVerifier?: RecaptchaVerifier;
-  private recaptchaInitialized = false;
   private auth;
 
   constructor(private http: HttpClient, private router: Router) {
@@ -33,11 +27,10 @@ export class AuthService {
 
     this.auth = getAuth();
 
-    // Firebase auth state listener
     onAuthStateChanged(this.auth, (currentUser) => {
       if (currentUser) {
-        // Default kirim ke Laravel tanpa level_id jika login ulang
-        this.sendUserDataToLaravel(currentUser);
+        // Tidak langsung kirim ke Laravel di sini, biarkan login yang handle
+        this.user.next(currentUser);
       } else {
         this.user.next(null);
         localStorage.removeItem('user');
@@ -52,18 +45,14 @@ export class AuthService {
   }
 
   /**
-   * Login dengan Google dan kirim data ke Laravel
-   * @param levelId (2 = driver, 3 = penumpang)
+   * Login dengan Google
    */
-  async loginWithGoogle(levelId: number = 3): Promise<User | null> {
+  async loginWithGoogle(): Promise<User | null> {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(this.auth, provider);
-
       if (!result.user.uid) throw new Error('UID Firebase tidak ditemukan!');
-
       this.user.next(result.user);
-      this.sendUserDataToLaravel(result.user, levelId);
       return result.user;
     } catch (error) {
       console.error('Google login error', error);
@@ -72,60 +61,55 @@ export class AuthService {
   }
 
   /**
-   * Kirim data user dari Google atau registrasi ke Laravel
-   * @param user dari Firebase
-   * @param levelId default 3 (penumpang)
+   * Kirim data user dari Google ke backend Laravel
    */
-  sendUserDataToLaravel(user: any, levelId: number = 3) {
-    const payload = {
-      uid: user.uid,
-      name: user.displayName || '',
-      email: user.email || '',
-      phone: user.phoneNumber || '',
-      photo_url: user.photoURL || '',
-      level_id: levelId
-    };
+ sendUserDataToLaravel(user: any, levelId: number = 3) {
+  const payload = {
+    uid: user.uid,
+    name: user.displayName || user.name || localStorage.getItem('name') || 'Pengguna',
+    email: user.email || '',
+    phone: user.phoneNumber || '',
+    photo_url: user.photoURL || '',
+    level_id: levelId
+  };
 
-    this.http.post<{ user: any; token: string }>('http://localhost:8000/api/store-user', payload).subscribe({
-      next: (res) => {
-        console.log('Payload yang dikirim:', payload);
-
-        console.log('✅ User data sent to Laravel:', res);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        localStorage.setItem('token', res.token);
-        this.user.next(res.user);
-        
-      },
-      error: (error) => {
-      console.error('❌ Registrasi gagal:', error);
-      if (error.status === 422) {
-        const errors = error.error.errors;
-        console.warn('🟡 Detail validasi gagal:', errors);}
-  }});
-  }
-
-  loginWithEmail(email: string, password: string) {
-  const data = { email, password };
-  return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/login', data);
+  // Kembalikan Observable agar bisa di-.subscribe() dari luar
+  return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/store-user', payload);
 }
 
 
+
   /**
-   * Register email/password manual costumer (dari form-register atau registers)
+   * Ambil data user dari backend berdasarkan email
+   */
+  getUserFromLaravel(email: string) {
+    return this.http.post<any>('http://localhost:8000/api/get-user', { email });
+  }
+
+  /**
+   * Login manual dengan email dan password
+   */
+  loginWithEmail(email: string, password: string) {
+    const data = { email, password };
+    return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/login', data);
+  }
+
+  /**
+   * Registrasi manual customer
    */
   registerUser(data: any) {
     return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/register', data);
   }
 
   /**
-   * Register email/password manual driver (dari form-register atau registers)
+   * Registrasi driver
    */
   registerDriver(data: any) {
-  return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/register-driver', data);
-}
+    return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/register-driver', data);
+  }
 
   /**
-   * Logout dari Firebase & hapus local storage
+   * Logout
    */
   async logout(): Promise<void> {
     try {
@@ -138,30 +122,4 @@ export class AuthService {
       throw error;
     }
   }
-
-  // Jika nanti ingin OTP login, bisa aktifkan ini
-  // setupRecaptcha(containerId: string) {
-  //   if (this.recaptchaInitialized) return;
-  //   this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerId, {
-  //     size: 'invisible',
-  //     callback: (response: any) => console.log('reCAPTCHA solved:', response),
-  //     'expired-callback': () => console.warn('reCAPTCHA expired.')
-  //   });
-  //   this.recaptchaVerifier.render();
-  //   this.recaptchaInitialized = true;
-  // }
-
-  // async sendOTP(phoneNumber: string): Promise<void> {
-  //   if (!this.recaptchaVerifier) throw new Error('reCAPTCHA belum diinisialisasi');
-  //   this.confirmationResult = await signInWithPhoneNumber(this.auth, phoneNumber, this.recaptchaVerifier);
-  //   console.log('OTP sent');
-  // }
-
-  // async verifyOTP(otpCode: string): Promise<User | null> {
-  //   if (!this.confirmationResult) throw new Error('OTP belum dikirim.');
-  //   const result = await this.confirmationResult.confirm(otpCode);
-  //   this.user.next(result.user);
-  //   this.sendUserDataToLaravel(result.user); // Tanpa level_id
-  //   return result.user;
-  // }
 }

@@ -30,6 +30,9 @@ Route::post('/login', [ApiAuthController::class, 'login']);
 // Route baru untuk menyimpan data user dari Firebase (Google/Phone OTP)
 Route::post('/store-user', [ApiAuthController::class, 'storeUser']);
 
+Route::post('/get-user', [ApiAuthController::class, 'getUser']);
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

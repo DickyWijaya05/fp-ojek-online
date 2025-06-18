@@ -84,6 +84,7 @@ public function registerDriver(Request $request)
 
         $user = User::where('email', $request->email)->first();
 
+
 // ⛔ Cegah login manual jika password kosong (akun dari Google)
     if (empty($user->password)) {
         return response()->json([
@@ -144,17 +145,29 @@ public function registerDriver(Request $request)
             }
         }
 
-        $user = User::updateOrCreate(
-            ['uid' => $request->uid],
-            [
-                'name' => $request->name ?? 'User',
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'photo_url' => $request->photo_url,
-                'level_id' => 3, // customer
-                'password' => null // dummy password, tidak digunakan
-            ]
-        );
+        $user = User::where('uid', $request->uid)->first();
+
+if ($user) {
+    // Update data kecuali level_id
+    $user->update([
+        'name' => $request->name ?? $user->name,
+        'email' => $request->email ?? $user->email,
+        'phone' => $request->phone ?? $user->phone,
+        'photo_url' => $request->photo_url ?? $user->photo_url,
+    ]);
+} else {
+    // Buat user baru
+    $user = User::create([
+        'uid' => $request->uid,
+        'name' => $request->name ?? 'User',
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'photo_url' => $request->photo_url,
+        'level_id' => $request->level_id ?? 3, // <- Gunakan level_id dari frontend
+        'password' => null
+    ]);
+}
+
 
         $token = $user->createToken('firebase-login')->plainTextToken;
 
@@ -164,5 +177,27 @@ public function registerDriver(Request $request)
         ]);
     }
     
+
+    // ✅ AMBIL DATA USER BERDASARKAN EMAIL
+// ✅ Ambil user berdasarkan email
+public function getUser(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email'
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json([
+            'message' => 'User tidak ditemukan'
+        ], 404);
+    }
+
+    return response()->json([
+        'user' => $user
+    ]);
+}
+
 
 }

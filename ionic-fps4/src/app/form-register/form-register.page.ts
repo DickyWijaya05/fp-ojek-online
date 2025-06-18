@@ -23,9 +23,9 @@ export class FormRegisterPage implements OnInit {
     private alertController: AlertController,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -37,10 +37,12 @@ export class FormRegisterPage implements OnInit {
 
   async registerWithGoogle() {
     try {
-      const user = await this.authService.loginWithGoogle(3);
+      const user = await this.authService.loginWithGoogle();
+this.authService.sendUserDataToLaravel(user, 3); // penumpang
+
       console.log('Registrasi Google berhasil:', user);
       if (user) {
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/login-costumer');
       }
     } catch (error) {
       console.error('Registrasi Google gagal:', error);
