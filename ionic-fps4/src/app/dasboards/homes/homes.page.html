@@ -1,19 +1,16 @@
-<ion-content class="dashboards-content">
-  <div class="header-bg"></div>
-
-  <div class="profile-section" *ngIf="user">
-    <img [src]="user.photo_url || 'assets/Profile.png'" alt="Profile" class="profile-image" />
-    <h2 class="greeting">
-      Hallo,<br />
-      <strong>{{ user.name || 'Driver' }}</strong>
-    </h2>
-    <p class="subtitle">Mau kemana nih?</p>
-    <ion-button class="location-button" expand="block" shape="round" (click)="goToLokasi()">
-      Klik disini buat tau lokasi kamu
-    </ion-button>
+<ion-content class="ion-padding custom-background">
+  <div class="profile-section">
+    <img src="assets/Logo.png" alt="logo">
+    <h2>Hallo Driver, Username</h2>
+    <p>Siap Narik Nih??</p>
+>>>>>>> update-front-end
   </div>
 
+  <ion-button expand="block" shape="round" class="search-customer-button" (click)="goToLokasi()">
+    Klik disini buat cari pelanggan
+  </ion-button>
+
   <div class="promo-section">
-    <img src="assets/Benner dasborad.png" alt="Promo" class="promo-image" />
+    <img src="assets/Benner Kalo Belum ada transaksi 1.png" alt="Promo" class="promo-image" />
   </div>
 </ion-content>

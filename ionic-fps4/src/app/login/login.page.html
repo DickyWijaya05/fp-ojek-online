@@ -9,6 +9,11 @@
 
 
 <ion-content class="ion-padding custom-background">
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingText="Tarik untuk refresh" refreshingText="Merefresh..." refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
 
   <!-- Logo -->
   <div class="logo-container">
@@ -19,21 +24,18 @@
   <h1 class="title">Let’s Get Started!!</h1>
   <p class="subtitle">Yokk ahh Login dulu</p>
 
-<!-- Form Login -->
+  <!-- Form Login -->
   <ion-item>
-    <ion-label position="floating">Email</ion-label>
+    <ion-label position="floating" class="color">Email</ion-label>
     <ion-input [(ngModel)]="email" type="email" placeholder="you@example.com"></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label position="floating">Password</ion-label>
+    <ion-label position="floating" class="color">Password</ion-label>
     <ion-input [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••"></ion-input>
-    <ion-icon
-    slot="end"
-    [name]="showPassword ? 'eye-off' : 'eye'"
-    (click)="togglePasswordVisibility()"
-    class="password-icon">
-  </ion-icon>
+    <ion-icon slot="end" [name]="showPassword ? 'eye-off' : 'eye'" (click)="togglePasswordVisibility()"
+      class="password-icon">
+    </ion-icon>
   </ion-item>
 
   <!-- Tombol Login -->
