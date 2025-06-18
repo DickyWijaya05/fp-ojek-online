@@ -35,3 +35,77 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* GLOBAL FONT SETTING */
+body, ion-content, ion-label, ion-title, ion-text, ion-button, ion-input, ion-item {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Optional: Ganti default Ionic font juga */
+:root {
+  --ion-font-family: 'Montserrat', sans-serif;
+}
+
+
+/* ALERT STYLE: FRESH & ELEGANT */
+.elegant-alert .alert-wrapper {
+  background: linear-gradient(to bottom right, #ffffff, #fef9e7);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  animation: smoothPop 0.3s ease-out;
+  border: 1px solid #f1c40f;
+  max-width: 320px;
+}
+
+.elegant-alert .alert-head {
+  text-align: center;
+}
+
+.elegant-alert .alert-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.elegant-alert .alert-message {
+  font-size: 18px;
+  color: #4a4a4a;
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 5px;
+}
+
+.elegant-alert .alert-button-group {
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.elegant-alert-button {
+  background: #197C34 !important;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 25px;
+  border-radius: 30px;
+  padding: 10px 24px;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(25, 124, 52, 0.3);
+  transition: background 0.2s ease-in-out;
+}
+
+.elegant-alert-button:hover {
+  background: #149a42 !important;
+}
+
+/* Smooth Pop In Animation */
+@keyframes smoothPop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

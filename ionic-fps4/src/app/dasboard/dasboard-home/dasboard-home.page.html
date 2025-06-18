@@ -1,13 +1,15 @@
 <ion-content class="dashboard-content">
+  <!-- Tombol Back -->
+  <ion-button fill="clear" size="large" class="back-button" routerLink="/login">
+    <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+  </ion-button>
   <div class="header-bg"></div>
 
   <div class="profile-section">
     <img src="assets/Profile.png" alt="Profile" class="profile-image" />
     <h2 class="greeting">Hallo,<br /><strong>Pak Ustadz</strong></h2>
     <p class="subtitle">Mau kemana nih?</p>
-    <ion-button class="location-button" expand="block" shape="round" (click)="goToLokasi()">
-      Klik disini buat tau lokasi kamu
-    </ion-button>
+    <ion-button class="location-button" expand="block" shape="round" (click)="goToLokasi()"> Klik disini buat tau lokasi kamu </ion-button>
   </div>
 
   <div class="promo-section">

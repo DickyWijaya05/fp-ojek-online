@@ -1,23 +1,23 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom" class="tab-bar">
-    <ion-tab-button tab="homes">
+  <ion-tab-bar slot="bottom" class="custom-tab-bar">
+    <ion-tab-button tab="homes" [class.selected]="selectedTab === 'homes'" (click)="setSelectedTab('homes')">
       <ion-icon name="home"></ion-icon>
-      <ion-label>Homes</ion-label>
+      <ion-label>Home</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="activitys">
+    <ion-tab-button tab="activitys" [class.selected]="selectedTab === 'activitys'" (click)="setSelectedTab('activitys')">
       <ion-icon name="document-text"></ion-icon>
-      <ion-label>Activitys</ion-label>
+      <ion-label>Activity</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="accounts">
+    <ion-tab-button tab="accounts" [class.selected]="selectedTab === 'accounts'" (click)="setSelectedTab('accounts')">
       <ion-icon name="person-sharp"></ion-icon>
-      <ion-label>Accounts</ion-label>
+      <ion-label>Account</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="chats">
+    <ion-tab-button tab="chats" [class.selected]="selectedTab === 'chats'" (click)="setSelectedTab('chats')">
       <ion-icon name="chatbubble-ellipses"></ion-icon>
-      <ion-label>Chats</ion-label>
+      <ion-label>Chat</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

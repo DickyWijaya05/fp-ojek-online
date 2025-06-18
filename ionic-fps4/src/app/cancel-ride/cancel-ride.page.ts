@@ -40,7 +40,7 @@ export class CancelRidePage implements OnInit {
       this.navCtrl.navigateForward('/canceled');
     } else {
       const alert = await this.alertController.create({
-        header: 'Cancel Ride',
+        header: 'Cencel Ride',
         message: 'Silakan pilih alasan pembatalan terlebih dahulu.',
         buttons: [
           {

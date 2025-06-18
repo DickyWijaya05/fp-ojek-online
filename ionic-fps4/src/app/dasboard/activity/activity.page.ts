@@ -1,48 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
 
-@Component({
+@Component({ 
   standalone: false,
   selector: 'app-activity',
   templateUrl: './activity.page.html',
-  styleUrls: ['./activity.page.scss'],
+  styleUrls: ['./activity.page.scss']
 })
 export class ActivityPage implements OnInit {
-  selected: string = '';
 
-  constructor(private alertController: AlertController) {}
+  selectedTab = 'riwayat';
 
-  ngOnInit() {
-    this.selected = ''; // Reset saat awal component dibuka pertama kali
-  }
+  riwayatList = [
+    { universitas: 'Universitas UBP', keterangan: 'Perjalanan Selesai', harga: 5000 },
+    { universitas: 'Universitas UBP', keterangan: 'Perjalanan Selesai', harga: 5000 },
+  ];
 
-  ionViewWillEnter() {
-    this.selected = ''; // Reset saat halaman kembali aktif
-  }
+  prosesList = [
+    { universitas: 'Universitas UBP', keterangan: 'Perjalanan Dalam Proses!', harga: 5000 },
+    { universitas: 'Universitas UBP', keterangan: 'Perjalanan Dalam Proses!', harga: 5000 },
+  ];
 
-  selectMethod(method: string) {
-    this.selected = method;
-  }
+  constructor() { }
 
-  async confirmMethod() {
-    if (this.selected) {
-      console.log('Metode dipilih:', this.selected);
-      // navigasi atau logika lanjutan bisa ditambahkan di sini
-    } else {
-      const alert = await this.alertController.create({
-        header: 'Pilih Metode Pembayaran',
-        message: 'Silakan pilih metode pembayaran terlebih dahulu.',
-        buttons: [
-          {
-            text: 'Oke',
-            role: 'cancel',
-            cssClass: 'elegant-alert-button',
-          },
-        ],
-        cssClass: 'elegant-alert',
-        backdropDismiss: false,
-      });
-      await alert.present();
-    }
-  }
+  ngOnInit() { }
 }

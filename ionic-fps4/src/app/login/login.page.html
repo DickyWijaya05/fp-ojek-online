@@ -16,12 +16,12 @@
 
   <!-- Form Login -->
   <ion-item>
-    <ion-label position="floating">Email</ion-label>
+    <ion-label position="floating" class="color">Email</ion-label>
     <ion-input [(ngModel)]="email" type="email" placeholder="you@example.com"></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label position="floating">Password</ion-label>
+    <ion-label position="floating" class="color">Password</ion-label>
     <ion-input [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••"></ion-input>
     <ion-icon slot="end" [name]="showPassword ? 'eye-off' : 'eye'" (click)="togglePasswordVisibility()"
       class="password-icon">

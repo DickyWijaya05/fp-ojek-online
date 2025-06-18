@@ -120,17 +120,15 @@ ion-refresher-content {
 }
 
 ion-item {
-  --background: transparent;
+  --background: white;
   margin-bottom: 15px;
-  border-radius: 10px;
-  --highlight-height: 0;
-}
-
-ion-label {
-  font-weight: 500;
-  color: #000;
+  border-radius: 15px;
 }
 
 ion-input {
-  color: #000;
+  color: #000000;
+  font-size: 10px;
+}
+.color {
+  color: #000000;
 }
