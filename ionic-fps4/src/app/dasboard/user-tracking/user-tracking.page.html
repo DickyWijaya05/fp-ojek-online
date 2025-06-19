@@ -4,29 +4,24 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <!-- Input Lokasi Awal -->
   <ion-item>
     <ion-label position="floating">Lokasi Awal</ion-label>
     <ion-input [(ngModel)]="startQuery" (keyup.enter)="searchLocation('start')"></ion-input>
   </ion-item>
 
+  <!-- Input Lokasi Tujuan -->
   <ion-item>
     <ion-label position="floating">Lokasi Tujuan</ion-label>
     <ion-input [(ngModel)]="destQuery" (keyup.enter)="searchLocation('dest')"></ion-input>
   </ion-item>
 
-  <div id="map" style="height: 400px; margin: 10px 0;"></div>
+  <!-- Map -->
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
 
+  <!-- Tombol Simpan -->
   <ion-button expand="block" color="primary" (click)="saveLocations()">Simpan Lokasi</ion-button>
-
-  <ion-card *ngIf="startCoords && destCoords">
-    <ion-card-header>
-      <ion-card-title>📝 Lokasi Tersimpan</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Awal:</strong> {{ startCoords.lat.toFixed(6) }}, {{ startCoords.lng.toFixed(6) }}</p>
-      <p><strong>Tujuan:</strong> {{ destCoords.lat.toFixed(6) }}, {{ destCoords.lng.toFixed(6) }}</p>
-    </ion-card-content>
-  </ion-card>
 </ion-content>
-<app-custom-tab-bar></app-custom-tab-bar>

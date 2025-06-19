@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\Admin\TarifController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +35,8 @@ Route::middleware(['auth', 'admin']) // middleware untuk keamanan akses
         Route::get('/status-driver', [AdminController::class, 'statusDriver'])->name('status-driver');
 
         // Tarif dan Laporan
-        Route::get('/tarif', [AdminController::class, 'tarif'])->name('tarif');
+        Route::get('/tarif', [TarifController::class, 'edit'])->name('tarif');
+        Route::post('/tarif', [TarifController::class, 'updateWeb'])->name('tarif.update');
         Route::get('/laporan-transaksi', [AdminController::class, 'laporanTransaksi'])->name('laporan-transaksi');
         Route::get('/laporan-aktivitas', [AdminController::class, 'laporanAktivitas'])->name('laporan-aktivitas');
 

@@ -6,6 +6,20 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\DriverDocumentController;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\Api\CustomerLocationController;
+use App\Http\Controllers\Admin\TarifController;
+
+
+
+
+Route::post('/route', [\App\Http\Controllers\RouteController::class, 'getRoute']);
+
+
+// Jika pakai autentikasi Sanctum (disarankan untuk produksi)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/customer-location', [CustomerLocationController::class, 'store']);
+});
+
 
 Route::get('/search-location', function () {
     $query = request('q');
@@ -38,6 +52,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Admin only
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/tarif', [TarifController::class, 'edit'])->name('admin.tarif.edit');
+    Route::post('/tarif', [TarifController::class, 'updateWeb'])->name('admin.tarif.update');
+});
+
 Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
     Route::get('/users', [AdminUserController::class, 'index']);
     Route::get('/users/{id}', [AdminUserController::class, 'show']);

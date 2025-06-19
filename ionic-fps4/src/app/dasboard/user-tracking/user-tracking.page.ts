@@ -30,46 +30,56 @@ export class UserTrackingPage {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
-    // START marker
     this.startCoords = { lat, lng };
-    this.startMarker = L.marker([lat, lng], {
-      draggable: true,
-      icon: L.icon({
-        iconUrl: 'assets/Logo.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32]
-      })
-    })
-      .addTo(this.map)
-      .bindPopup(`📍 Lokasi Awal:<br>${lat.toFixed(6)}, ${lng.toFixed(6)}`)
-      .openPopup();
+    this.startMarker = this.createMarker(lat, lng, '📍 Lokasi Awal');
 
-    this.startMarker.on('dragend', (event: L.LeafletEvent) => {
-      const pos = (event.target as L.Marker).getLatLng();
-      this.startCoords = { lat: pos.lat, lng: pos.lng };
-      this.startMarker?.setPopupContent(`📍 Lokasi Awal (Diseret):<br>${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`).openPopup();
-    });
-
-    // DEST marker
     this.destCoords = { lat: lat + 0.005, lng };
-    this.destMarker = L.marker([lat + 0.005, lng], {
-      draggable: true,
-      icon: L.icon({
-        iconUrl: 'assets/Logo.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32]
-      })
-    })
-      .addTo(this.map)
-      .bindPopup(`📍 Tujuan:<br>${(lat + 0.005).toFixed(6)}, ${lng.toFixed(6)}`);
+    this.destMarker = this.createMarker(lat + 0.005, lng, '📍 Tujuan');
 
-    this.destMarker.on('dragend', (event: L.LeafletEvent) => {
-      const pos = (event.target as L.Marker).getLatLng();
-      this.destCoords = { lat: pos.lat, lng: pos.lng };
-      this.destMarker?.setPopupContent(`📍 Tujuan (Diseret):<br>${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`).openPopup();
+    Geolocation.watchPosition({}, (position, err) => {
+      if (err) {
+        console.error('❌ Gagal melacak lokasi:', err);
+        return;
+      }
+
+      if (position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.startCoords = { lat, lng };
+        if (this.startMarker) {
+          this.startMarker.setLatLng([lat, lng]);
+          this.startMarker.setPopupContent(`📍 Lokasi Saat Ini:<br>${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+        }
+        this.map?.panTo([lat, lng]);
+      }
     });
 
     setTimeout(() => this.map?.invalidateSize(), 100);
+  }
+
+  createMarker(lat: number, lng: number, label: string): L.Marker {
+    const marker = L.marker([lat, lng], {
+      draggable: true,
+      icon: L.icon({
+        iconUrl: 'assets/Logo.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      })
+    }).addTo(this.map!)
+      .bindPopup(`${label}:<br>${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+      .openPopup();
+
+    marker.on('dragend', (event: L.LeafletEvent) => {
+      const pos = (event.target as L.Marker).getLatLng();
+      if (label.includes('Awal')) {
+        this.startCoords = { lat: pos.lat, lng: pos.lng };
+      } else {
+        this.destCoords = { lat: pos.lat, lng: pos.lng };
+      }
+      marker.setPopupContent(`${label} (Diseret):<br>${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`).openPopup();
+    });
+
+    return marker;
   }
 
   async searchLocation(type: 'start' | 'dest') {
@@ -103,12 +113,86 @@ export class UserTrackingPage {
     }
   }
 
-  saveLocations() {
-    console.log('📦 Lokasi Awal:', this.startCoords);
-    console.log('📦 Tujuan:', this.destCoords);
-    alert(
-      `✅ Lokasi disimpan:\n\nAwal: ${this.startCoords?.lat.toFixed(6)}, ${this.startCoords?.lng.toFixed(6)}\n` +
-      `Tujuan: ${this.destCoords?.lat.toFixed(6)}, ${this.destCoords?.lng.toFixed(6)}`
-    );
+  async saveLocations() {
+    await this.calculateRoute(); // otomatis hitung rute dan simpan
+  }
+
+  async calculateRoute() {
+    if (!this.startCoords || !this.destCoords) {
+      alert('Koordinat belum lengkap');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:8000/api/route',
+        {
+          coordinates: [
+            [this.startCoords.lng, this.startCoords.lat],
+            [this.destCoords.lng, this.destCoords.lat],
+          ]
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
+
+      const geojson = response.data.route_geojson;
+      const distanceKm = response.data.distance_km;
+      const durationMin = response.data.duration_min;
+      const totalPrice = response.data.total_price;
+
+      L.geoJSON(geojson, {
+        style: {
+          color: 'blue',
+          weight: 4
+        }
+      }).addTo(this.map!);
+
+      alert(`✅ Rute berhasil!\nJarak: ${distanceKm} km\nDurasi: ${durationMin} menit\nTarif: Rp${totalPrice}`);
+
+      await this.saveLocationsWithTarif(distanceKm, durationMin, totalPrice);
+    } catch (error) {
+      console.error('❌ Gagal menghitung rute:', error);
+      alert('Gagal menampilkan rute');
+    }
+  }
+
+  async saveLocationsWithTarif(distanceKm: number, durationMin: number, totalPrice: number) {
+    if (!this.startCoords || !this.destCoords) {
+      alert('Lokasi belum lengkap');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        'http://localhost:8000/api/customer-location',
+        {
+          start_lat: this.startCoords.lat,
+          start_lng: this.startCoords.lng,
+          dest_lat: this.destCoords.lat,
+          dest_lng: this.destCoords.lng,
+          start_address: this.startQuery,
+          dest_address: this.destQuery,
+          distance_km: distanceKm,
+          duration_min: durationMin,
+          total_price: totalPrice,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
+
+      console.log('✅ Lokasi dan tarif berhasil disimpan ke database.');
+    } catch (error) {
+      console.error('❌ Gagal menyimpan lokasi & tarif:', error);
+      alert('❌ Gagal menyimpan data ke server');
+    }
   }
 }

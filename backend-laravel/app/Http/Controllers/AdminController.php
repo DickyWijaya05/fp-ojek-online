@@ -72,7 +72,7 @@ class AdminController extends Controller
 
     public function tarif()
     {
-        return view('admin.tarif');
+        return view('admin.tarif.edit');
     }
 
     public function laporanTransaksi()
