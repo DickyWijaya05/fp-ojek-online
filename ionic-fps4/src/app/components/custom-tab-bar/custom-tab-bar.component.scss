@@ -5,7 +5,11 @@
   height: 90px;
   padding-bottom: env(safe-area-inset-bottom);
 
-  position: relative;
+  position: fixed; // fix posisi di bawah layar
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
 
   ion-tab-button {
     flex-direction: column;
@@ -13,8 +17,8 @@
     align-items: center;
     color: black;
     font-weight: bold;
-    position: relative;
     flex: 1;
+    position: relative;
 
     ion-icon {
       font-size: 43px;
@@ -38,7 +42,7 @@
     }
 
     &.selected::before {
-      background-color: #007f3f; // garis hijau di atas tab aktif
+      background-color: #007f3f;
     }
   }
 }
