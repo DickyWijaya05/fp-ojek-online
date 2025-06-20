@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\Admin\TarifController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +16,11 @@ use App\Http\Controllers\Admin\TarifController;
 // === Halaman Login Admin ===
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::get('/admin/profile/edit', [AdminController::class, 'editProfile'])->name('admin.edit-profile');
+Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+Route::post('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+Route::post('/admin/profile/change-password', [AdminController::class, 'changePassword'])->name('admin.profile.change-password');
+
 
 // === Group Route Admin (yang sudah login dan admin) ===
 Route::middleware(['auth', 'admin']) // middleware untuk keamanan akses
@@ -24,6 +30,8 @@ Route::middleware(['auth', 'admin']) // middleware untuk keamanan akses
 
         // Dashboard
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        // Admin Profil
+        Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
 
         // Manajemen User
         Route::get('/users', [AdminController::class, 'users'])->name('users');

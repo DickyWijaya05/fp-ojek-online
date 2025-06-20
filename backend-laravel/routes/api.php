@@ -8,7 +8,7 @@ use App\Http\Controllers\DriverDocumentController;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Api\CustomerLocationController;
 use App\Http\Controllers\Admin\TarifController;
-
+use App\Http\Controllers\DriverLocationController;
 
 
 
@@ -79,6 +79,8 @@ Route::middleware(['auth:sanctum', 'is_driver'])->group(function () {
     Route::get('/driver/profile', function (Request $request) {
         return response()->json(['user' => $request->user()]);
     });
+
+    Route::post('/driver-location', [DriverLocationController::class, 'store']);
 
 
     // Upload dokumen (akses driver, pakai token)

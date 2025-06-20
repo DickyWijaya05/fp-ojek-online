@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Driver;
+use App\Models\User;
 
 class DriverController extends Controller
 {
     // Tampilkan semua driver
     public function index()
     {
-        $drivers = Driver::paginate(10); // Atau ganti 10 sesuai jumlah yang kamu mau
-
+        $drivers = User::where('level_id', 2)->paginate(10);
         return view('admin.drivers.index', compact('drivers'));
     }
 
@@ -26,58 +25,57 @@ class DriverController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:drivers,email',
+            'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|max:20',
-            'vehicle' => 'required|string|max:100',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
-        Driver::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'vehicle' => $request->vehicle,
-            'status' => $request->status ?? 'aktif',
+            'password' => bcrypt($request->password),
+            'level_id' => 2, // Set level driver
+            'status' => 'active',
         ]);
 
-        return redirect()->route('drivers.index')->with('success', 'Driver berhasil ditambahkan.');
+        return redirect()->route('admin.drivers.index')->with('success', 'Driver berhasil ditambahkan.');
     }
 
     // Tampilkan form edit driver
     public function edit($id)
     {
-        $driver = Driver::findOrFail($id);
+        $driver = User::where('level_id', 2)->findOrFail($id);
         return view('admin.drivers.edit', compact('driver'));
     }
 
     // Update data driver
     public function update(Request $request, $id)
     {
-        $driver = Driver::findOrFail($id);
+        $driver = User::where('level_id', 2)->findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:drivers,email,' . $driver->id,
+            'email' => 'required|email|unique:users,email,' . $driver->id,
             'phone' => 'required|string|max:20',
-            'vehicle' => 'required|string|max:100',
         ]);
 
         $driver->update([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'vehicle' => $request->vehicle,
-            'status' => $request->status ?? 'aktif',
+            'status' => $request->status ?? 'active',
         ]);
 
-        return redirect()->route('drivers.index')->with('success', 'Data driver berhasil diperbarui.');
+        return redirect()->route('admin.drivers.index')->with('success', 'Data driver berhasil diperbarui.');
     }
 
     // Hapus driver
     public function destroy($id)
     {
-        $driver = Driver::findOrFail($id);
+        $driver = User::where('level_id', 2)->findOrFail($id);
         $driver->delete();
 
-        return redirect()->route('drivers.index')->with('success', 'Driver berhasil dihapus.');
+        return redirect()->route('admin.drivers.index')->with('success', 'Driver berhasil dihapus.');
     }
 }

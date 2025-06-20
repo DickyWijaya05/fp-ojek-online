@@ -6,4 +6,17 @@
 
 <ion-content fullscreen>
   <div id="map" style="height: 100%; width: 100%;"></div>
+
+<div class="coordinate-display" style="margin-top: 1rem; text-align: center;">
+  <p><strong>📍 Koordinat Saat Ini:</strong></p>
+  <p>Latitude: {{ currentLat }}</p>
+  <p>Longitude: {{ currentLng }}</p>
+
+ 
+</div>
+
+     <ion-button expand="block" color="success" (click)="simpanLokasi()" style="margin-top: 1rem;">
+      Oke
+    </ion-button>
+
 </ion-content>

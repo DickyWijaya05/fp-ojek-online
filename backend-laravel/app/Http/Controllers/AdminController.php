@@ -7,7 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class AdminController extends Controller
-{
+{   
+    public function profile()
+    {
+    // Ambil data admin dari session atau auth
+    $admin = auth()->user(); // sesuaikan jika kamu pakai guard khusus admin
+
+    return view('admin.profile', compact('admin'));
+    }
+
     public function dashboard()
     {
         return view('admin.dashboard');
