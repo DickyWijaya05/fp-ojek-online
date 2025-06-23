@@ -8,6 +8,7 @@ import { HomesPageRoutingModule } from './homes-routing.module';
 
 import { HomesPage } from './homes.page';
 
+
 @NgModule({
   imports: [
     CommonModule,

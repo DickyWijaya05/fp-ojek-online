@@ -1,6 +1,21 @@
-.custom-toolbar {
-  --background: #fddf5c; /* warna kuning */
-  --color: #000;         /* teks hitam */
+.header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: #fddf5c;
+}
+
+.back-button {
+  color: #000;
+  margin-right: 10px;
+}
+
+.page-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 23px;
+  color: #000;
+  margin: 0;
 }
 
 .custom-bg {

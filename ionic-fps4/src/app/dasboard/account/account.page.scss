@@ -10,17 +10,14 @@
   width: 100%;
 }
 
-/* ===== HEADER ===== */
-.profile-header {
-  padding: 8px 0 12px;
-  border-bottom: 1px solid #000;
-}
 
 .title {
   font-size: 26px;
   font-weight: 700;
   margin: 0;
   padding-left: 12px;  /* judul menempel kiri */
+  margin-top: 20px;
+  color: #000;
 }
 
 /* ===== AVATAR ===== */
@@ -49,11 +46,15 @@
 
 /* ===== FORM DISPLAY ===== */
 .form-section {
-  padding: 0 12px;
+  padding: 0 8px;
+}
+
+.id{
+  border: 1px solid black;
 }
 
 .form-label {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   margin: 12px 0 6px;
   color: #000;
@@ -62,9 +63,9 @@
 .input-item {
   --background: #ffffff;
   --padding-start: 14px;
-  --min-height: 56px;       /* lebih tinggi */
-  border-radius: 12px;
-  margin-bottom: 10px;
+  --min-height: 70px;       /* lebih tinggi */
+  border-radius: 15px;
+  margin-bottom: 18px;
   font-size: 16px;          /* teks lebih besar */
 }
 

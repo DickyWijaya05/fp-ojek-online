@@ -3,83 +3,67 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/register-option"></ion-back-button>
     </ion-buttons>
-    <ion-title>Isi Data Diri Anda</ion-title>
+    <ion-title class="toolbar-title">Isi Data Diri Anda</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding custom-background" fullscreen scroll="true">
+<ion-content class="custom-background" fullscreen scroll="true">
   <div class="page-container">
-    <div class="form-section">
 
+    <div class="form-section">
       <!-- Full Name -->
-       <ion-label class="form-label">Full Name</ion-label>
+      <label class="form-label">Full Name</label>
       <ion-item class="input-item">
-        <ion-input type="text" placeholder="Full name" [(ngModel)]="fullName"></ion-input>
+        <ion-label position="floating">Full Name</ion-label>
+        <ion-input type="text" [(ngModel)]="fullName"></ion-input>
       </ion-item>
 
       <!-- Email -->
-       <ion-label class="form-label">Email</ion-label>
+      <label class="form-label">Email</label>
       <ion-item class="input-item">
         <ion-icon slot="start" name="mail-unread-outline"></ion-icon>
-        <ion-input placeholder="Email" type="email" [(ngModel)]="email"></ion-input>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email"></ion-input>
       </ion-item>
 
       <!-- Phone Number -->
-       <ion-label class="form-label">Phone Number</ion-label>
+      <label class="form-label">Phone Number</label>
       <ion-item class="input-item">
         <ion-avatar slot="start" class="small-flag">
           <img src="assets/id.png" alt="id" />
         </ion-avatar>
-        <ion-input placeholder="Enter phone number" type="number" [(ngModel)]="phone"></ion-input>
+        <ion-label position="floating">Phone Number</ion-label>
+        <ion-input type="number" [(ngModel)]="phone"></ion-input>
       </ion-item>
 
       <!-- Password -->
-      <ion-label class="form-label">Password</ion-label>
+      <label class="form-label">Password</label>
       <ion-item class="input-item">
-        <ion-input
-          [type]="showPassword ? 'text' : 'password'"
-          placeholder="Password"
-          [(ngModel)]="password"
-          required>
-        </ion-input>
-        <ion-icon
-          slot="end"
-          [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-          (click)="togglePasswordVisibility()"
-          style="cursor: pointer;">
-        </ion-icon>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password"></ion-input>
+        <ion-icon slot="end" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+          (click)="togglePasswordVisibility()" style="cursor: pointer;"></ion-icon>
       </ion-item>
 
       <!-- Confirm Password -->
-      <ion-label class="form-label">Konfirmasi Password</ion-label>
+      <label class="form-label">Konfirmasi Password</label>
       <ion-item class="input-item">
-        <ion-input
-          [type]="showConfirmPassword ? 'text' : 'password'"
-          placeholder="Konfirmasi Password"
-          [(ngModel)]="confirmPassword"
-          required>
-        </ion-input>
-        <ion-icon
-          slot="end"
-          [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
-          (click)="toggleConfirmPasswordVisibility()"
-          style="cursor: pointer;">
-        </ion-icon>
+        <ion-label position="floating">Konfirmasi Password</ion-label>
+        <ion-input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword"></ion-input>
+        <ion-icon slot="end" [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
+          (click)="toggleConfirmPasswordVisibility()" style="cursor: pointer;"></ion-icon>
       </ion-item>
 
       <!-- Tombol Continue -->
-      <div class="button-wrapper">
-        <ion-button expand="block" shape="round" class="continue-button" (click)="onContinue()">
-          Continue
-        </ion-button>
-      </div>
+      <ion-button expand="block" fill="solid" shape="round" class="continue-button"
+        (click)="onContinue()">Continue</ion-button>
 
-      <!-- Google Register Button -->
-      <ion-button expand="block" shape="round" class="social-button google" (click)="registerWithGoogle()">
+      <!-- Google Button -->
+      <ion-button expand="block" fill="solid" shape="round" class="social-button google" (click)="registerWithGoogle()">
         <img src="assets/Google.png" class="custom-icon" alt="Google" slot="start" />
         Continue with Google
       </ion-button>
-
     </div>
+
   </div>
 </ion-content>

@@ -1,33 +1,73 @@
-.container {
+.welcome-background {
+  --background: #fddf5c;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100%;
-  background-color: #ffe152;
+  align-items: center;
+}
+
+.welcome-container {
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.logo-wrapper {
+  margin-bottom: 30px;
 
   .logo {
-    width: 150px;
+    width: 170px;
     height: auto;
-    margin-bottom: 20px;
+    margin-top: 180px;
   }
+}
+
+.text-section {
+  margin-bottom: 30px;
 
   h1 {
-    font-weight: bold;
     font-size: 24px;
-    margin: 10px 0;
-    text-align: center;
+    font-weight: bold;
+    color: #1c1c1c;
+    margin-bottom: 10px;
+
+    .brand {
+      color: #007f3f;
+    }
   }
 
-  p {
+  .subtext {
     font-size: 16px;
-    margin-bottom: 40px;
-    text-align: center;
+    color: #333;
   }
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
 
   ion-button {
-    width: 80%;
-    margin: 10px 0;
+    --border-radius: 30px;
+    height: 50px;
     font-weight: bold;
+    font-size: 16px;
+  }
+
+  .btn-register {
+    --background: #ffffff;
+    --border-color: #000000;
+    --color: rgb(0, 0, 0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-login {
+    --background: #007f3f;
+    --color: #fddf5c;
+    --border-color: #007f3f;
+    --border-width: 2px;
+    background: transparent;
   }
 }
