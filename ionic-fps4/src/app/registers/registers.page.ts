@@ -10,7 +10,6 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./registers.page.scss'],
 })
 export class RegistersPage implements OnInit {
-
   fullName: string = '';
   email: string = '';
   phone: string = '';
@@ -24,9 +23,9 @@ export class RegistersPage implements OnInit {
     private authService: AuthService,
     private alertController: AlertController,
     private router: Router
-  ) { }
+  ) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -50,7 +49,6 @@ export class RegistersPage implements OnInit {
       return;
     }
 
-
     if (!passwordRegex.test(this.password)) {
       this.showAlert('Password harus diawali huruf besar dan mengandung angka.');
       return;
@@ -65,21 +63,21 @@ export class RegistersPage implements OnInit {
       name: this.fullName,
       email: this.email,
       phone: this.phone,
-      level_id: 2, // 2 = Driver
+      level_id: 2,
       password: this.password,
-      password_confirmation: this.confirmPassword
+      password_confirmation: this.confirmPassword,
     };
 
     try {
       const response = await this.authService.registerDriver(driverData).toPromise();
-      
+
       if (response) {
-  localStorage.setItem('auth_token', response.token);
-  localStorage.setItem('user', JSON.stringify(response.user));
-}
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
 
       this.showAlert('Registrasi berhasil!', 'Sukses');
-      this.router.navigateByUrl('/document-driver'); // Arahkan ke upload dokumen
+      this.router.navigateByUrl('/document-driver');
     } catch (error) {
       console.error('Registrasi gagal:', error);
       this.showAlert('Registrasi gagal. Coba lagi.');
@@ -90,7 +88,15 @@ export class RegistersPage implements OnInit {
     const alert = await this.alertController.create({
       header,
       message,
-      buttons: ['OK']
+      buttons: [
+        {
+          text: 'Oke',
+          role: 'cancel',
+          cssClass: 'elegant-alert-button',
+        },
+      ],
+      cssClass: 'elegant-alert',
+      backdropDismiss: false,
     });
     await alert.present();
   }

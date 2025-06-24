@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -20,7 +21,11 @@ export class DocumentDriverPage {
     vehicle_photo: null
   };
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private alertController: AlertController
+  ) {}
 
   onFileChange(event: any, docType: string) {
     const file = event.target.files[0];
@@ -29,7 +34,14 @@ export class DocumentDriverPage {
     }
   }
 
-  submitDocuments() {
+  async submitDocuments() {
+    // Validasi dokumen tidak boleh kosong
+    const isAnyFileMissing = Object.values(this.documents).some(file => file === null);
+    if (!this.vehicleName.trim() || !this.vehicleType.trim() || isAnyFileMissing) {
+      this.showAlert('Semua data kendaraan dan dokumen wajib diisi!');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('vehicle_name', this.vehicleName);
     formData.append('vehicle_type', this.vehicleType);
@@ -48,15 +60,32 @@ export class DocumentDriverPage {
 
     this.http.post('http://localhost:8000/api/driver/documents', formData, { headers })
       .subscribe(
-        (response) => {
+        async (response) => {
           console.log('✅ Dokumen berhasil dikirim:', response);
-          alert('Dokumen berhasil dikirim!');
+          await this.showAlert('Dokumen berhasil dikirim!', 'Sukses');
           this.router.navigate(['/login']);
         },
-        (error) => {
+        async (error) => {
           console.error('❌ Gagal mengirim dokumen:', error);
-          alert('Gagal mengirim dokumen');
+          await this.showAlert('Gagal mengirim dokumen. Silakan coba lagi.');
         }
       );
+  }
+
+  async showAlert(message: string, header: string = 'Peringatan') {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: [
+        {
+          text: 'Oke',
+          role: 'cancel',
+          cssClass: 'elegant-alert-button',
+        },
+      ],
+      cssClass: 'elegant-alert',
+      backdropDismiss: false,
+    });
+    await alert.present();
   }
 }

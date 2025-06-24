@@ -23,9 +23,9 @@ export class FormRegisterPage implements OnInit {
     private alertController: AlertController,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -38,7 +38,7 @@ export class FormRegisterPage implements OnInit {
   async registerWithGoogle() {
     try {
       const user = await this.authService.loginWithGoogle();
-this.authService.sendUserDataToLaravel(user, 3); // penumpang
+      this.authService.sendUserDataToLaravel(user, 3); // 3 = penumpang
 
       console.log('Registrasi Google berhasil:', user);
       if (user) {
@@ -73,8 +73,8 @@ this.authService.sendUserDataToLaravel(user, 3); // penumpang
       email: this.email,
       phone: String(this.phone),
       password: this.password,
-      password_confirmation: this.confirmPassword, // ✅ untuk validasi Laravel
-      level_id: 3
+      password_confirmation: this.confirmPassword,
+      level_id: 3,
     };
 
     this.authService.registerUser(data).subscribe({
@@ -85,7 +85,7 @@ this.authService.sendUserDataToLaravel(user, 3); // penumpang
       error: async (err) => {
         console.error('❌ Registrasi gagal:', err);
         this.showAlert('Registrasi gagal. Coba lagi.');
-      }
+      },
     });
   }
 
@@ -93,7 +93,15 @@ this.authService.sendUserDataToLaravel(user, 3); // penumpang
     const alert = await this.alertController.create({
       header,
       message,
-      buttons: ['OK']
+      buttons: [
+        {
+          text: 'Oke',
+          role: 'cancel',
+          cssClass: 'elegant-alert-button',
+        },
+      ],
+      cssClass: 'elegant-alert',
+      backdropDismiss: false,
     });
     await alert.present();
   }

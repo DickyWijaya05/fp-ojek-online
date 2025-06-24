@@ -1,3 +1,5 @@
+/* ========== DEFAULT (LIGHT MODE) ========== */
+
 /* Warna latar sesuai mockup */
 .custom-background {
   --background: #fcd949;
@@ -10,20 +12,20 @@
   width: 100%;
 }
 
-
 .title {
   font-size: 26px;
   font-weight: 700;
   margin: 0;
-  padding-left: 12px;  /* judul menempel kiri */
+  padding-left: 12px;
   margin-top: 20px;
   color: #000;
 }
 
 /* ===== AVATAR ===== */
 .avatar-wrapper {
-  padding: 20px 0 12px 12px;   /* sedikit tarikan ke kanan biar sejajar judul */
+  padding: 20px 0 12px 12px;
   position: relative;
+  margin-bottom: 20px;
 }
 
 .profile-avatar {
@@ -31,11 +33,10 @@
   height: 96px;
 }
 
-/* ikon edit menumpuk di pojok kanan-bawah avatar */
 .edit-icon {
   position: absolute;
   bottom: 8px;
-  left: 88px;          /* 96px (lebar avatar) - 24px (setengah ikon) - 8px margin */
+  left: 88px;
   --background: #00c853;
   width: 26px;
   height: 26px;
@@ -49,10 +50,6 @@
   padding: 0 8px;
 }
 
-.id{
-  border: 1px solid black;
-}
-
 .form-label {
   font-size: 16px;
   font-weight: 600;
@@ -63,19 +60,23 @@
 .input-item {
   --background: #ffffff;
   --padding-start: 14px;
-  --min-height: 70px;       /* lebih tinggi */
+  --min-height: 70px;
   border-radius: 15px;
   margin-bottom: 18px;
-  font-size: 16px;          /* teks lebih besar */
+  font-size: 16px;
+  color: #000; /* teks default */
 }
 
-/* ukuran ikon di dalam item */
 .input-item ion-icon,
 .chevron-icon {
   font-size: 20px;
+  color: #000;
 }
 
-/* bendera & chevron rapat */
+.id {
+  border: 1px solid black;
+}
+
 .small-flag {
   width: 32px;
   height: 32px;
@@ -88,4 +89,26 @@
 }
 .chevron-icon {
   margin-left: 6px;
+}
+
+
+/* ========== DARK MODE SUPPORT (HANYA TEKS & IKON) ========== */
+@media (prefers-color-scheme: dark) {
+  .title,
+  .form-label,
+  .input-item,
+  .input-item ion-input,
+  .input-item ion-icon,
+  .chevron-icon {
+    color: #000 !important;     /* agar tetap terlihat di background kuning */
+    --color: #000 !important;   /* untuk token warna Ionic */
+  }
+
+  .id {
+    border: 1px solid #000;
+  }
+
+  .edit-icon {
+    --background: #00c853; /* tidak berubah di dark mode */
+  }
 }
