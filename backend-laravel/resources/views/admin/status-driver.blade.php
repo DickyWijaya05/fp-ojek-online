@@ -8,13 +8,13 @@
   <!-- Search -->
   <div class="flex justify-end">
     <input type="search" id="searchDriver" placeholder="Cari nama driver..."
-      class="w-full sm:w-72 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm">
+      class="w-full sm:w-72 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm transition">
   </div>
 
   <!-- Table -->
-  <div class="overflow-x-auto bg-white rounded-2xl shadow-xl border border-gray-100 animate-fade-in-up">
-    <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
-      <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+  <div class="overflow-x-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 animate-fade-in-up transition">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm text-left">
+      <thead class="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">
         <tr>
           <th class="px-6 py-3">Foto</th>
           <th class="px-6 py-3">Nama</th>
@@ -23,25 +23,25 @@
           <th class="px-6 py-3">Perjalanan</th>
         </tr>
       </thead>
-      <tbody id="driverBody" class="divide-y divide-gray-100 text-gray-700">
+      <tbody id="driverBody" class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-200">
         @foreach([
           ['nama' => 'Dian Pratama', 'status' => 'online', 'rating' => 4.9, 'trip' => 120, 'foto' => 'https://i.pravatar.cc/100?img=1'],
           ['nama' => 'Bayu Saputra', 'status' => 'offline', 'rating' => 4.3, 'trip' => 95, 'foto' => 'https://i.pravatar.cc/100?img=2'],
           ['nama' => 'Rizki Alamsyah', 'status' => 'online', 'rating' => 4.8, 'trip' => 132, 'foto' => 'https://i.pravatar.cc/100?img=3'],
           ['nama' => 'Yusuf Kurniawan', 'status' => 'offline', 'rating' => 4.4, 'trip' => 87, 'foto' => 'https://i.pravatar.cc/100?img=4'],
         ] as $driver)
-        <tr class="hover:bg-gray-50 transition-all duration-200 driver-row">
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 driver-row">
           <td class="px-6 py-4">
             <img src="{{ $driver['foto'] }}" alt="Foto {{ $driver['nama'] }}" class="w-12 h-12 rounded-full border shadow">
           </td>
           <td class="px-6 py-4 font-semibold driver-name">{{ $driver['nama'] }}</td>
           <td class="px-6 py-4">
             @if($driver['status'] === 'online')
-              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium animate-pulse">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-medium animate-pulse">
                 <i data-lucide="radio" class="w-4 h-4"></i> Online
               </span>
             @else
-              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-xs font-medium">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium">
                 <i data-lucide="moon-star" class="w-4 h-4"></i> Offline
               </span>
             @endif

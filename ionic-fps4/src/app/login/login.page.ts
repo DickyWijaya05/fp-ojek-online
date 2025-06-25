@@ -26,8 +26,17 @@ export class LoginPage {
         const user = res.user;
         const token = res.token;
 
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('token', token);
+        if (user.level_id === 2) {
+  localStorage.setItem('driver_user', JSON.stringify(user));
+  localStorage.setItem('driver_token', token);
+  this.router.navigateByUrl('/dasboards'); // driver
+} else if (user.level_id === 3) {
+  localStorage.setItem('passenger_user', JSON.stringify(user));
+  localStorage.setItem('passenger_token', token);
+  this.router.navigateByUrl('/dasboard'); // penumpang
+} else {
+  alert('Level pengguna tidak dikenali.');
+}
 
         // Arahkan ke dashboard berdasarkan level_id
         if (user.level_id === 2) {

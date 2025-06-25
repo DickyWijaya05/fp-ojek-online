@@ -7,14 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'customer_id',
-        'driver_id',
-        'start_lat',
-        'start_lng',
-        'dest_lat',
-        'dest_lng',
-        'distance_km',
-        'fare',
-        'status',
+        'user_id', 'driver_id',
+        'start_lat', 'start_lng',
+        'dest_lat', 'dest_lng',
+        'start_address', 'dest_address',
+        'status'
     ];
+
+    // Relasi ke customer (user yang memesan)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relasi ke driver (user yang menerima)
+    public function driver()
+    {
+        return $this->belongsTo(User::class, 'driver_id');
+    }
 }

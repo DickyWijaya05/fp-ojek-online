@@ -1,22 +1,70 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Driver Tracking</ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- Map-nya hanya satu, tetap render di semua kondisi -->
+<div id="map" style="height: 100vh; width: 100%; z-index: 1;"></div>
 
-<ion-content fullscreen>
-  <div id="map" style="height: 100%; width: 100%;"></div>
+<!-- UI Order dinamis berdasarkan stepStatus -->
+<ng-container [ngSwitch]="stepStatus">
 
-<div class="coordinate-display" style="margin-top: 1rem; text-align: center;">
-  <p><strong>📍 Koordinat Saat Ini:</strong></p>
-  <p>Latitude: {{ currentLat }}</p>
-  <p>Longitude: {{ currentLng }}</p>
+  <ng-container *ngSwitchCase="null">
+    <ion-card *ngIf="incomingOrder">
+      <ion-card-header>
+        <ion-card-title>📦 Order Masuk</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Customer:</strong> {{ incomingOrder.user.name }}</p>
+        <p><strong>Dari:</strong> {{ incomingOrder.start_address }}</p>
+        <p><strong>Tujuan:</strong> {{ incomingOrder.dest_address }}</p>
+        <ion-button expand="block" color="success" (click)="acceptOrder()">Terima Order</ion-button>
+        <ion-button expand="block" color="danger" (click)="rejectOrder()">Tolak Order</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 
- 
-</div>
+  <ng-container *ngSwitchCase="'accepted'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>📍 Menuju titik jemput</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Tujuan: {{ incomingOrder?.start_address }}</p>
+        <ion-button expand="block" color="primary" (click)="stepStatus = 'pickupReached'">Sudah sampai jemput</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 
-     <ion-button expand="block" color="success" (click)="simpanLokasi()" style="margin-top: 1rem;">
-      Oke
-    </ion-button>
+  <ng-container *ngSwitchCase="'pickupReached'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>✅ Sudah Jemput</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Selanjutnya antar ke: {{ incomingOrder?.dest_address }}</p>
+        <ion-button expand="block" color="primary" (click)="proceedToDestination()">Lanjut ke tujuan</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 
-</ion-content>
+  <ng-container *ngSwitchCase="'toDestination'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>🏁 Menuju Tujuan</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Destinasi: {{ incomingOrder?.dest_address }}</p>
+        <ion-button expand="block" color="success" (click)="completeTrip()">Selesai</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'completed'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>🎉 Order Selesai!</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Terima kasih! Kamu sudah sampai tujuan.</p>
+        <ion-button expand="block" (click)="stepStatus = null; incomingOrder = null;">Kembali ke Home</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+</ng-container>
