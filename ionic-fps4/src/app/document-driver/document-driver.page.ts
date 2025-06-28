@@ -28,7 +28,7 @@ export class DocumentDriverPage {
     if (file) {
       this.documents[docType] = file;
     }
-  }
+  } 
 
   submitDocuments() {
     const formData = new FormData();
