@@ -273,12 +273,38 @@ async sudahSampaiJemput() {
     }
   }
 
-  completeTrip() {
-    this.stepStatus = 'completed';
-    alert('🎉 Perjalanan selesai!');
+async completeTrip() {
+  this.stepStatus = 'completed';
+
+  alert('🎉 Perjalanan selesai!');
+
+  if (!this.incomingOrder) return;
+  const token = localStorage.getItem('driver_token');
+  const orderId = this.incomingOrder.id;
+
+  try {
+    // ✅ Kirim status ke backend untuk update dan trigger notifikasi FCM ke customer
+    await axios.post(`http://localhost:8000/api/driver/order-status/${orderId}`, {
+      status: 'completed'
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    console.log('✅ Notifikasi pembayaran dikirim ke pelanggan');
+  } catch (err) {
+    console.error('❌ Gagal kirim notifikasi pembayaran ke pelanggan:', err);
   }
+}
 
+resetTracking() {
+  this.stepStatus = null;
+  this.acceptedOrderId = null;
+  this.incomingOrder = null;
 
+  if (this.routeLine) this.map?.removeLayer(this.routeLine);
+  if (this.pickupMarker) this.map?.removeLayer(this.pickupMarker);
+  if (this.destinationMarker) this.map?.removeLayer(this.destinationMarker);
+}
 
 
   async rejectOrder() {

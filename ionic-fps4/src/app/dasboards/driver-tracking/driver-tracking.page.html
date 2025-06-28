@@ -59,16 +59,16 @@
     </ion-card>
   </ng-container>
 
-  <ng-container *ngSwitchCase="'completed'">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>🎉 Order Selesai!</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Terima kasih! Kamu sudah sampai tujuan.</p>
-        <ion-button expand="block" (click)="stepStatus = null; incomingOrder = null;">Kembali ke Home</ion-button>
-      </ion-card-content>
-    </ion-card>
-  </ng-container>
+ <ng-container *ngSwitchCase="'completed'">
+  <div class="payment-confirmation">
+    <div class="banner-content">
+      <img src="assets/paid.png" alt="Pembayaran" class="banner-icon" />
+      <h2>🎉 Perjalanan Selesai</h2>
+      <p>Notifikasi telah dikirim ke penumpang untuk melakukan pembayaran.</p>
+      <ion-button expand="block" color="primary" (click)="resetTracking()">Kembali ke Beranda</ion-button>
+    </div>
+  </div>
+</ng-container>
+
 
 </ng-container>
