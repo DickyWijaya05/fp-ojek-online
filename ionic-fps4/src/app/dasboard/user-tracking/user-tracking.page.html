@@ -51,7 +51,7 @@
   <ion-card class="card-modern" *ngIf="driverStatus === 'found' && selectedDriver">
     <ion-item lines="none">
       <ion-avatar slot="start">
-        <img src="assets/driver.png"  />
+        <img src="assets/driver.png" alt=""  />
       </ion-avatar>
       <ion-label>
         <h2>{{ selectedDriver.user.name }}</h2>
@@ -71,7 +71,7 @@
   <ion-card class="card-modern" *ngIf="driverStatus === 'info' && selectedDriver">
     <ion-item lines="none">
       <ion-avatar slot="start">
-        <img src="assets/driver.png" />
+        <img src="assets/driver.png" alt="" />
       </ion-avatar>
       <ion-label>
         <h2>{{ selectedDriver.user.name }}</h2>
@@ -118,7 +118,7 @@
 
   <div *ngIf="orderStatus === 'pickupReached'" class="full-page-banner">
     <div class="banner-content">
-      <img src="assets/Logo.png" class="banner-icon" />
+      <img src="assets/Logo.png" class="banner-icon" alt="" />
       <h2>🚖 Driver Tiba!</h2>
       <p>Driver sudah sampai di titik jemput. Silakan naik dan bersiap menuju tujuan.</p>
       <ion-button expand="block" color="success" (click)="lanjutKeTujuan()">OK, Saya Sudah Naik</ion-button>
@@ -138,5 +138,5 @@
     </ion-card-content>
   </ion-card>
 
-  
+
 </ion-content>

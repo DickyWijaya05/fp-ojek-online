@@ -1,14 +1,10 @@
 <ion-header>
   <ion-toolbar style="--background: #ffde59; --color: #000000;">
-    
+
 
     <!-- Toggle status di pojok kanan atas -->
     <ion-buttons slot="end">
-      <ion-toggle
-        [(ngModel)]="isOnline"
-        (ionChange)="toggleStatus()"
-        style="margin-right: 8px;"
-      ></ion-toggle>
+      <ion-toggle [(ngModel)]="isOnline" (ionChange)="toggleStatus()" style="margin-right: 8px;"></ion-toggle>
     </ion-buttons>
 
   </ion-toolbar>

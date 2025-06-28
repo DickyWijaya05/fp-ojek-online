@@ -35,13 +35,13 @@ export class DocumentDriverPage {
     }
   }
 
-  async submitDocuments() {
-    // Validasi dokumen tidak boleh kosong
-    const isAnyFileMissing = Object.values(this.documents).some(file => file === null);
-    if (!this.vehicleName.trim() || !this.vehicleType.trim() || isAnyFileMissing) {
-      this.showAlert('Semua data kendaraan dan dokumen wajib diisi!');
-      return;
-    }
+  submitDocuments() {
+    // // Validasi dokumen tidak boleh kosong
+    // const isAnyFileMissing = Object.values(this.documents).some(file => file === null);
+    // if (!this.vehicleName.trim() || !this.vehicleType.trim() || isAnyFileMissing) {
+    //   this.showAlert('Semua data kendaraan dan dokumen wajib diisi!');
+    //   return;
+    // }
 
     const formData = new FormData();
     formData.append('vehicle_name', this.vehicleName);
