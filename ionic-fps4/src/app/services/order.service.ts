@@ -14,7 +14,7 @@ export class OrderService {
           Authorization: `Bearer ${token}`,
         }
       });
-      return response.data;
+      return response;
     } catch (error: any) {
       throw error.response?.data?.message || 'Gagal membuat order';
     }

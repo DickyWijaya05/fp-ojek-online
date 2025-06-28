@@ -1,80 +1,100 @@
-/* Warna latar sesuai mockup */
+/* ========== Warna Dasar ========== */
 .custom-background {
   --background: #fcd949;
+  background-color: #fcd949;
 }
 
-/* Container */
+/* ========== Layout Container ========== */
 .page-container {
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 10px;
 }
 
-/* ===== HEADER ===== */
+/* ========== Header ========== */
 .profile-header {
-  padding: 8px 0 12px;
-  border-bottom: 1px solid #000;
+  padding: 16px 12px;
+  border-bottom: 2px solid #000;
+  background: transparent;
 }
 
 .title {
   font-size: 26px;
-  font-weight: 700;
+  font-weight: bold;
+  color: #000;
   margin: 0;
-  padding-left: 12px;  /* judul menempel kiri */
 }
 
-/* ===== AVATAR ===== */
+/* ========== Avatar + Edit Icon ========== */
 .avatar-wrapper {
-  padding: 20px 0 12px 12px;   /* sedikit tarikan ke kanan biar sejajar judul */
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
   position: relative;
 }
 
 .profile-avatar {
-  width: 96px;
-  height: 96px;
+  width: 100px;
+  height: 100px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ikon edit menumpuk di pojok kanan-bawah avatar */
+/* Edit icon di pojok kanan bawah */
 .edit-icon {
   position: absolute;
-  bottom: 8px;
-  left: 88px;          /* 96px (lebar avatar) - 24px (setengah ikon) - 8px margin */
+  bottom: 0;
+  left: 88px;
   --background: #00c853;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   padding: 0;
   min-height: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  color: #fff;
 }
 
-/* ===== FORM DISPLAY ===== */
+/* ========== Form Style ========== */
 .form-section {
-  padding: 0 12px;
+  padding: 0 16px;
 }
 
 .form-label {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  margin: 12px 0 6px;
-  color: #000;
+  color: #222;
+  margin: 12px 0 4px;
 }
 
 .input-item {
-  --background: #ffffff;
+  --background: #fff;
   --padding-start: 14px;
-  --min-height: 56px;       /* lebih tinggi */
+  --min-height: 50px;
   border-radius: 12px;
-  margin-bottom: 10px;
-  font-size: 16px;          /* teks lebih besar */
+  margin-bottom: 12px;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-/* ukuran ikon di dalam item */
-.input-item ion-icon,
-.chevron-icon {
-  font-size: 20px;
+/* input dan select text color */
+ion-input,
+ion-select,
+ion-select-option {
+  color: #000 !important;
 }
 
-/* bendera & chevron rapat */
+/* Gender text (non-edit) */
+.readonly-gender {
+  font-size: 16px;
+  color: #000;
+  padding-left: 10px;
+  line-height: 44px;
+}
+
+/* Bendera kecil */
 .small-flag {
   width: 32px;
   height: 32px;
@@ -85,6 +105,20 @@
   object-fit: cover;
   border-radius: 50%;
 }
+
 .chevron-icon {
   margin-left: 6px;
+  color: #333;
+}
+
+/* ========== Tombol ========== */
+ion-button {
+  margin: 10px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+ion-button[color="success"] {
+  --background: #00c853;
 }

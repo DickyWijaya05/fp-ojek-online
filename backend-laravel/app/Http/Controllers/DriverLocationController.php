@@ -104,5 +104,18 @@ class DriverLocationController extends Controller
             'data' => $nearestDriver
         ]);
     }
+public function getLocation($driverId)
+{
+    $location = DriverLocation::where('driver_id', $driverId)->first();
+
+    if (!$location) {
+        return response()->json(['message' => 'Lokasi belum tersedia'], 404);
+    }
+
+    return response()->json([
+        'latitude' => $location->latitude,
+        'longitude' => $location->longitude,
+    ]);
+}
 
 }

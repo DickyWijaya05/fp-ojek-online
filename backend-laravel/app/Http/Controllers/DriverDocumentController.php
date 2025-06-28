@@ -13,7 +13,8 @@ class DriverDocumentController extends Controller
     {
         $request->validate([
             'vehicle_name' => 'required|string',
-            'vehicle_type' => 'required|string',
+            'vehicle_color' => 'required|string', 
+            'plate_number' => 'required|string', 
             'ktp' => 'required|file|image',
             'selfie_ktp' => 'required|file|image',
             'sim' => 'required|file|image',
@@ -22,17 +23,18 @@ class DriverDocumentController extends Controller
             'vehicle_photo' => 'required|file|image',
         ]);
 
-        $driverId = auth()->id();
+        $userId = auth()->id();
 
         $paths = [];
         foreach (['ktp', 'selfie_ktp', 'sim', 'stnk', 'pas_photo', 'vehicle_photo'] as $doc) {
-            $paths[$doc] = $request->file($doc)->store("documents/$driverId", 'public');
+            $paths[$doc] = $request->file($doc)->store("documents/$userId", 'public');
         }
 
         $doc = DriverDocument::create([
-            'driver_id' => $driverId,
+            'user_id' => $userId,
             'vehicle_name' => $request->vehicle_name,
-            'vehicle_type' => $request->vehicle_type,
+            'vehicle_color' => $request->vehicle_color,
+            'plate_number' => $request->plate_number,
             'ktp' => $paths['ktp'],
             'selfie_ktp' => $paths['selfie_ktp'],
             'sim' => $paths['sim'],

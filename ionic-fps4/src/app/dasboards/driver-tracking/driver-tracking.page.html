@@ -13,6 +13,10 @@
         <p><strong>Customer:</strong> {{ incomingOrder.user.name }}</p>
         <p><strong>Dari:</strong> {{ incomingOrder.start_address }}</p>
         <p><strong>Tujuan:</strong> {{ incomingOrder.dest_address }}</p>
+        <p><strong>Jarak:</strong> {{ incomingOrder.distance_km?.toFixed(2) }} km</p>
+        <p><strong>Durasi:</strong> {{ incomingOrder.duration_min?.toFixed(1) }} menit</p>
+        <p><strong>Tarif:</strong> Rp {{ incomingOrder.total_price?.toLocaleString() }}</p>
+
         <ion-button expand="block" color="success" (click)="acceptOrder()">Terima Order</ion-button>
         <ion-button expand="block" color="danger" (click)="rejectOrder()">Tolak Order</ion-button>
       </ion-card-content>
@@ -26,7 +30,7 @@
       </ion-card-header>
       <ion-card-content>
         <p>Tujuan: {{ incomingOrder?.start_address }}</p>
-        <ion-button expand="block" color="primary" (click)="stepStatus = 'pickupReached'">Sudah sampai jemput</ion-button>
+        <ion-button expand="block" color="primary" (click)="sudahSampaiJemput()">Sudah Sampai Titik Jemput</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>

@@ -11,7 +11,8 @@ class Order extends Model
         'start_lat', 'start_lng',
         'dest_lat', 'dest_lng',
         'start_address', 'dest_address',
-        'status'
+        'status',
+        'distance_km', 'duration_min', 'total_price',
     ];
 
     // Relasi ke customer (user yang memesan)

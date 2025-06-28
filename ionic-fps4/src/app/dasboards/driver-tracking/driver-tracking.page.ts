@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import * as L from 'leaflet';
 import { Geolocation } from '@capacitor/geolocation';
 import axios from 'axios';
+import type { GeoJsonObject } from 'geojson';
 
 @Component({
   standalone: false,
@@ -19,7 +20,7 @@ export class DriverTrackingPage {
   stepStatus: 'accepted' | 'pickupReached' | 'toDestination' | 'completed' | null = null;
   pickupMarker: L.Marker | undefined;
   destinationMarker: L.Marker | undefined;
-  routeLine: L.Polyline | undefined;
+  routeLine: L.Layer | undefined;
 
 
   async ionViewDidEnter() {
@@ -127,86 +128,157 @@ export class DriverTrackingPage {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert('✅ Order berhasil diterima!');
-      this.acceptedOrderId = this.incomingOrder.id;
-      this.stepStatus = 'accepted';
-      await this.fetchAcceptedOrderAndDrawRoute();
-      // this.showRouteToPickup();
-      // this.incomingOrder = null;
-    } catch (err) {
-      alert('❌ Gagal menerima order.');
-    }
-  }
 
-   async fetchAcceptedOrderAndDrawRoute() {
-    const token = localStorage.getItem('driver_token');
-    try {
-      const response = await axios.get('http://localhost:8000/api/driver/incoming-order', {
-        headers: { Authorization: `Bearer ${token}` },
+      // ✅ Kirim status: OTW ke lokasi jemput
+      await axios.post(`http://localhost:8000/api/driver/order-status/${this.incomingOrder.id}`, {
+        status: 'on_the_way'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (response.data.data.length > 0) {
-        this.incomingOrder = response.data.data[0];
+      alert('✅ Order berhasil diterima dan status OTW dikirim!');
+      this.acceptedOrderId = this.incomingOrder.id;
+      this.stepStatus = 'accepted';
 
-        const { driver_lat, driver_lng, start_lat, start_lng } = this.incomingOrder;
+      const routeRes = await axios.post('http://localhost:8000/api/route', {
+        coordinates: [
+          [this.currentLng, this.currentLat], // Driver pos
+          [parseFloat(this.incomingOrder.start_lng), parseFloat(this.incomingOrder.start_lat)] // Penumpang pos
+        ]
+      });
 
-        if (driver_lat && driver_lng && start_lat && start_lng) {
-          this.showRouteToPickup();
-        } else {
-          console.warn('⚠️ Koordinat tidak lengkap.');
-        }
-      }
+      const geojson = routeRes.data.route_geojson;
+      this.incomingOrder.route_geojson = geojson;
+
+      alert('✅ Order diterima & rute berhasil diambil!');
+      this.showRouteToPickup();
+
     } catch (err) {
-      console.error('❌ Gagal ambil order:', err);
+      console.error('❌ Gagal menerima order atau ambil rute:', err);
+      alert('❌ Gagal menerima order.');
     }
   }
 
   showRouteToPickup() {
     if (!this.incomingOrder) return;
 
-    // Ambil dari database (kolom baru di tabel `orders`)
-    const driverLat = parseFloat(this.incomingOrder.driver_lat);
-    const driverLng = parseFloat(this.incomingOrder.driver_lng);
-
-    const pickupLat = parseFloat(this.incomingOrder.start_lat);
-    const pickupLng = parseFloat(this.incomingOrder.start_lng);
-
-    console.log('📍 Rute dari driver ke pickup point:', {
-      driverLat, driverLng, pickupLat, pickupLng
-    });
-
     if (this.routeLine) this.map?.removeLayer(this.routeLine);
     if (this.pickupMarker) this.map?.removeLayer(this.pickupMarker);
 
-    this.routeLine = L.polyline([[driverLat, driverLng], [pickupLat, pickupLng]], { color: 'blue' }).addTo(this.map!);
-    this.pickupMarker = L.marker([pickupLat, pickupLng]).addTo(this.map!);
-    this.map?.fitBounds(this.routeLine.getBounds());
+    try {
+      const rawGeoJson = this.incomingOrder.route_geojson;
+
+      const geojson = typeof rawGeoJson === 'string'
+        ? JSON.parse(rawGeoJson)
+        : rawGeoJson;
+
+      this.routeLine = L.geoJSON(geojson, {
+        style: { color: 'blue', weight: 4 }
+      }).addTo(this.map!);
+
+      const pickupLat = parseFloat(this.incomingOrder.start_lat);
+      const pickupLng = parseFloat(this.incomingOrder.start_lng);
+      this.pickupMarker = L.marker([pickupLat, pickupLng]).addTo(this.map!);
+
+      if ('getBounds' in this.routeLine && typeof this.routeLine.getBounds === 'function') {
+        this.map?.fitBounds(this.routeLine.getBounds());
+      }
+
+    } catch (err) {
+      console.warn('❌ Gagal parsing route_geojson, fallback ke garis lurus:', err);
+
+      const driverLat = this.currentLat;
+      const driverLng = this.currentLng;
+      const pickupLat = parseFloat(this.incomingOrder.start_lat);
+      const pickupLng = parseFloat(this.incomingOrder.start_lng);
+
+      this.routeLine = L.polyline([[driverLat, driverLng], [pickupLat, pickupLng]], { color: 'blue' }).addTo(this.map!);
+      this.pickupMarker = L.marker([pickupLat, pickupLng]).addTo(this.map!);
+
+      if ('getBounds' in this.routeLine && typeof this.routeLine.getBounds === 'function') {
+        this.map?.fitBounds(this.routeLine.getBounds());
+      }
+    }
   }
 
+async sudahSampaiJemput() {
+  if (!this.incomingOrder) return;
 
-  proceedToDestination() {
+  const token = localStorage.getItem('driver_token');
+  try {
+    await axios.post(`http://localhost:8000/api/driver/order-status/${this.incomingOrder.id}`, {
+      status: 'pickupReached'
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // ✅ Sukses kirim ke backend
+    this.stepStatus = 'pickupReached';
+
+    // 🔊 Mainkan suara lokal untuk konfirmasi
+    const audio = new Audio('assets/sound/arrived.mp3');
+    try {
+      await audio.play();
+    } catch (err) {
+      console.warn('Gagal play suara:', err);
+    }
+
+    alert('✅ Notifikasi "Sudah Sampai Jemput" dikirim ke penumpang!');
+  } catch (err) {
+    console.error('❌ Gagal kirim status pickupReached:', err);
+    alert('❌ Gagal mengirim notifikasi ke penumpang.');
+  }
+}
+
+
+
+  async proceedToDestination() {
     if (!this.incomingOrder) return;
 
     this.stepStatus = 'toDestination';
 
-    const pickupLat = parseFloat(this.incomingOrder.start_latitude);
-    const pickupLng = parseFloat(this.incomingOrder.start_longitude);
-    const destLat = parseFloat(this.incomingOrder.dest_latitude);
-    const destLng = parseFloat(this.incomingOrder.dest_longitude);
+    const orderId = this.incomingOrder.id;
 
-    if (this.routeLine) this.map?.removeLayer(this.routeLine);
-    if (this.destinationMarker) this.map?.removeLayer(this.destinationMarker);
+    try {
+      const token = localStorage.getItem('driver_token');
+      const res = await axios.get(`http://localhost:8000/api/driver/route-to-destination/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    this.routeLine = L.polyline([[pickupLat, pickupLng], [destLat, destLng]], { color: 'green' }).addTo(this.map!);
-    this.destinationMarker = L.marker([destLat, destLng]).addTo(this.map!);
 
-    this.map?.fitBounds(this.routeLine.getBounds());
+      const geojson = res.data.route_geojson;
+
+      // Bersihkan rute lama & marker lama
+      if (this.routeLine) this.map?.removeLayer(this.routeLine);
+      if (this.destinationMarker) this.map?.removeLayer(this.destinationMarker);
+
+      // Tambahkan rute dari jemput ke tujuan
+      this.routeLine = L.geoJSON(geojson, {
+        style: { color: 'green', weight: 4 }
+      }).addTo(this.map!);
+
+      // Marker tujuan akhir
+      const destLat = parseFloat(this.incomingOrder.dest_lat);
+      const destLng = parseFloat(this.incomingOrder.dest_lng);
+      this.destinationMarker = L.marker([destLat, destLng]).addTo(this.map!);
+
+      // Auto zoom ke rute
+      if (this.routeLine && 'getBounds' in this.routeLine && typeof this.routeLine.getBounds === 'function') {
+        this.map?.fitBounds(this.routeLine.getBounds());
+      }
+
+    } catch (error) {
+      console.error('❌ Gagal ambil rute ke tujuan:', error);
+      alert('⚠️ Gagal menampilkan rute ke tujuan.');
+    }
   }
 
   completeTrip() {
     this.stepStatus = 'completed';
     alert('🎉 Perjalanan selesai!');
   }
+
+
 
 
   async rejectOrder() {
@@ -244,7 +316,7 @@ export class DriverTrackingPage {
 
       console.log('📡 Data dari server:', response.data);
 
-      const orders = response.data.data;
+      const orders = Array.isArray(response.data?.data) ? response.data.data : [];
 
       if (orders.length > 0) {
         const firstNewOrder = orders.find((order: any) => {
@@ -262,7 +334,7 @@ export class DriverTrackingPage {
             console.warn('⚠️ Gagal memutar suara:', err);
           }
 
-          alert(`🚨 Order Masuk dari ${firstNewOrder.user?.name ?? 'Pelanggan'}\nTujuan: ${firstNewOrder.dest_address}`);
+          // alert(`🚨 Order Masuk dari ${firstNewOrder.user?.name ?? 'Pelanggan'}\nTujuan: ${firstNewOrder.dest_address}`);
           this.incomingOrder = firstNewOrder;
         }
       } else {

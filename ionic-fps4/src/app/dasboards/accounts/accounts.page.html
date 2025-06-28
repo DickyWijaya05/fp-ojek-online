@@ -1,4 +1,4 @@
-<ion-content class="ion-padding custom-background" fullscreen>
+<ion-content *ngIf="profile" class="ion-padding custom-background" fullscreen>
   <div class="page-container">
 
     <!-- Header -->
@@ -6,31 +6,39 @@
       <h1 class="title">Profile</h1>
     </div>
 
-    <!-- Foto profil + ikon edit  ➜ semuanya di kiri, ikon menumpuk -->
+    <!-- Foto profil -->
     <div class="avatar-wrapper">
       <ion-avatar class="profile-avatar">
-        <img src="assets/Profile.png" alt="profile" />
-        <!-- ikon edit menumpuk di pojok kanan-bawah avatar -->
-        <ion-button class="edit-icon" fill="solid" size="small">
+        <img [src]="profile.foto_profil || 'assets/Profile.png'" alt="profile" />
+        <ion-button class="edit-icon" fill="solid" size="small" (click)="triggerFileInput()">
           <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
         </ion-button>
+        <input type="file" #fileInput hidden (change)="uploadPhoto($event)" />
       </ion-avatar>
     </div>
 
-    <!-- Informasi profil -->
+    <!-- Form -->
     <div class="form-section">
 
       <!-- Nama -->
       <ion-label class="form-label">Nama</ion-label>
       <ion-item class="input-item">
-        <ion-input readonly value="Andrew Silalahi"></ion-input>
+        <ion-input
+          *ngIf="!isEditing"
+          [value]="profile.name"
+          readonly>
+        </ion-input>
+        <ion-input
+          *ngIf="isEditing"
+          [(ngModel)]="profile.name">
+        </ion-input>
       </ion-item>
 
       <!-- Email -->
       <ion-label class="form-label">Email</ion-label>
       <ion-item class="input-item">
         <ion-icon name="mail-outline" slot="start"></ion-icon>
-        <ion-input readonly value="AndrewSilalahi@Gmail.com"></ion-input>
+        <ion-input [value]="profile.email" readonly></ion-input>
       </ion-item>
 
       <!-- Phone -->
@@ -40,20 +48,54 @@
           <img src="assets/id.png" alt="id" />
         </ion-avatar>
         <ion-icon name="chevron-down-outline" slot="start" class="chevron-icon"></ion-icon>
-        <ion-input readonly value="+62 085760136913"></ion-input>
+
+        <ion-input
+          *ngIf="!isEditing"
+          [value]="profile.phone"
+          readonly>
+        </ion-input>
+        <ion-input
+          *ngIf="isEditing"
+          [(ngModel)]="profile.phone">
+        </ion-input>
       </ion-item>
 
       <!-- Gender -->
       <ion-label class="form-label">Gender</ion-label>
       <ion-item class="input-item">
-        <ion-input readonly value="Male"></ion-input>
+        <div *ngIf="!isEditing" class="readonly-gender">
+          {{ profile.gender === 'Male' ? 'Laki-laki' : profile.gender === 'Female' ? 'Perempuan' : '-' }}
+        </div>
+        <ion-select *ngIf="isEditing" [(ngModel)]="profile.gender">
+          <ion-select-option value="Male">Laki-laki</ion-select-option>
+          <ion-select-option value="Female">Perempuan</ion-select-option>
+        </ion-select>
       </ion-item>
 
       <!-- Date of Birth -->
       <ion-label class="form-label">Date of Birth</ion-label>
       <ion-item class="input-item">
-        <ion-input readonly value="12 - 27 - 1945"></ion-input>
+        <ion-input
+          *ngIf="!isEditing"
+          [value]="profile.date_of_birth"
+          readonly>
+        </ion-input>
+        <ion-input
+          *ngIf="isEditing"
+          [(ngModel)]="profile.date_of_birth"
+          type="date">
+        </ion-input>
         <ion-icon name="calendar-outline" slot="end"></ion-icon>
       </ion-item>
 
     </div>
+
+    <!-- Tombol aksi -->
+    <ion-button expand="block" (click)="isEditing = true" *ngIf="!isEditing">
+      Edit Profil
+    </ion-button>
+    <ion-button expand="block" color="success" (click)="saveProfile()" *ngIf="isEditing">
+      Simpan Perubahan
+    </ion-button>
+  </div>
+</ion-content>

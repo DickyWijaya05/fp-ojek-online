@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 })
 export class DocumentDriverPage {
   vehicleName: string = '';
-  vehicleType: string = '';
+  vehicleColor: string = '';
+  plateNumber: string = '';
   documents: { [key: string]: File | null } = {
     ktp: null,
     selfie_ktp: null,
@@ -32,7 +33,9 @@ export class DocumentDriverPage {
   submitDocuments() {
     const formData = new FormData();
     formData.append('vehicle_name', this.vehicleName);
-    formData.append('vehicle_type', this.vehicleType);
+    formData.append('vehicle_color', this.vehicleColor);
+    formData.append('plate_number', this.plateNumber);
+
 
     Object.keys(this.documents).forEach((key) => {
       const file = this.documents[key];
