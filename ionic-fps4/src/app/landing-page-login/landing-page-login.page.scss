@@ -7,30 +7,32 @@
 
 .welcome-container {
   text-align: center;
-  width: 100%;
-  max-width: 400px;
+  width: 90%;
+  max-width: 500px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 5vh 4vw;
+  box-sizing: border-box;
 }
 
 .logo-wrapper {
-  margin-bottom: 30px;
+  margin-bottom: 5vh;
 
   .logo {
-    width: 170px;
+    width: 40vw;
+    max-width: 180px;
     height: auto;
-    margin-top: 180px;
+    margin-top: 10vh;
   }
 }
 
 .text-section {
-  margin-bottom: 30px;
+  margin-bottom: 5vh;
 
   h1 {
-    font-size: 24px;
+    font-size: 5vw;
     font-weight: bold;
     color: #1c1c1c;
-    margin-bottom: 10px;
+    margin-bottom: 1vh;
 
     .brand {
       color: #007f3f;
@@ -38,28 +40,37 @@
   }
 
   .subtext {
-    font-size: 16px;
+    font-size: 4vw;
     color: #333;
+
+    @media (min-width: 768px) {
+      font-size: 1.2rem;
+    }
   }
 }
 
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 2vh;
+  margin-top: 3vh;
 
   ion-button {
     --border-radius: 30px;
-    height: 50px;
+    height: 6vh;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 4vw;
+
+    @media (min-width: 768px) {
+      font-size: 1rem;
+      height: 50px;
+    }
   }
 
   .btn-register {
     --background: #ffffff;
     --border-color: #000000;
-    --color: rgb(0, 0, 0);
+    --color: #000000;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
 

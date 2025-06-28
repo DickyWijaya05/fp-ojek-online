@@ -11,6 +11,9 @@ export class RegisterOptionPage {
   constructor(private navCtrl: NavController) { }
 
   pilihPeran(peran: string) {
+    // ✅ Tambahan baris ini untuk menghindari error aria-hidden
+    (document.activeElement as HTMLElement)?.blur();
+
     if (peran === 'penumpang') {
       this.navCtrl.navigateForward('/form-register'); // ke form register penumpang
     } else if (peran === 'pengemudi') {

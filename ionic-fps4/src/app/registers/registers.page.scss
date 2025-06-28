@@ -1,3 +1,33 @@
+.custom-header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1px;
+}
+
+.back-button {
+  margin-right: 10px;
+  color: #000;
+  font-size: 1.5rem;
+}
+
+.page-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 6vw;
+  color: #000;
+  margin: 0;
+
+  @media (max-width: 400px) {
+    font-size: 18px;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 22px;
+  }
+}
+
+
 .custom-background {
   --background: #fcd949;
 }
@@ -6,16 +36,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 20px;
-}
-
-.custom-toolbar {
-  --background: #fddf5c; /* warna kuning */
-  --color: #000;         /* teks hitam */
+  padding: 2vh 4vw 10vh;
 }
 
 .form-section {
-  width: 90%;
+  width: 100%;
+  max-width: 500px;
 }
 
 .form-label {
@@ -24,6 +50,11 @@
   margin-bottom: 4px;
   display: block;
   color: #000;
+  font-size: 1rem;
+
+  @media (max-width: 360px) {
+    font-size: 0.9rem;
+  }
 }
 
 .input-item {
@@ -57,8 +88,10 @@
 }
 
 .button-wrapper {
-  width: 90%;
+  width: 100%;
+  max-width: 500px;
   margin-top: 20px;
+  padding: 0 4vw;
 }
 
 .continue-button {
@@ -66,19 +99,25 @@
   color: #fddf5c;
   border-radius: 30px;
   margin-top: 20px;
-  width: 100% !important;
-  height: auto !important;
+  width: 100%;
   min-height: 48px;
-  text-transform: none;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 4.5vw;
+  text-transform: none;
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
 }
 
 ion-icon {
   color: #000 !important;
 }
 
-ion-label, ion-input, ion-item, ion-select {
+ion-label,
+ion-input,
+ion-item,
+ion-select {
   color: #000 !important;
 }
 
@@ -91,20 +130,16 @@ ion-label, ion-input, ion-item, ion-select {
     --ion-background-color: #fcd949;
   }
 
-  ion-label, ion-input, ion-select, ion-item, ion-icon {
+  ion-label,
+  ion-input,
+  ion-select,
+  ion-item,
+  ion-icon {
     color: #000 !important;
   }
 
   ion-input::part(native),
   ion-select::part(text) {
     color: #000 !important;
-  }
-}
-
-// Responsif layar kecil
-@media screen and (max-width: 360px) {
-  .form-section,
-  .button-wrapper {
-    width: 95%;
   }
 }

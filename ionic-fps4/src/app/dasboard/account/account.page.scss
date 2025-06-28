@@ -1,11 +1,9 @@
 /* ========== DEFAULT (LIGHT MODE) ========== */
 
-/* Warna latar sesuai mockup */
 .custom-background {
   --background: #fcd949;
 }
 
-/* Container */
 .page-container {
   display: flex;
   flex-direction: column;
@@ -13,12 +11,16 @@
 }
 
 .title {
-  font-size: 26px;
+  font-size: 6vw;
   font-weight: 700;
   margin: 0;
   padding-left: 12px;
   margin-top: 20px;
   color: #000;
+
+  @media (min-width: 768px) {
+    font-size: 26px;
+  }
 }
 
 /* ===== AVATAR ===== */
@@ -29,14 +31,17 @@
 }
 
 .profile-avatar {
-  width: 96px;
-  height: 96px;
+  width: 22vw;
+  height: 22vw;
+  max-width: 96px;
+  max-height: 96px;
 }
 
 .edit-icon {
   position: absolute;
   bottom: 8px;
-  left: 88px;
+  left: calc(100% - 18px);
+  transform: translateX(-100%);
   --background: #00c853;
   width: 26px;
   height: 26px;
@@ -51,26 +56,39 @@
 }
 
 .form-label {
-  font-size: 16px;
+  font-size: 4vw;
   font-weight: 600;
   margin: 12px 0 6px;
   color: #000;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
 }
 
 .input-item {
   --background: #ffffff;
   --padding-start: 14px;
-  --min-height: 70px;
+  --min-height: 12vw;
+  min-height: 60px;
   border-radius: 15px;
   margin-bottom: 18px;
-  font-size: 16px;
-  color: #000; /* teks default */
+  font-size: 4.2vw;
+  color: #000;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
 }
 
 .input-item ion-icon,
 .chevron-icon {
-  font-size: 20px;
+  font-size: 4.5vw;
   color: #000;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
 }
 
 .id {
@@ -78,8 +96,10 @@
 }
 
 .small-flag {
-  width: 32px;
-  height: 32px;
+  width: 8vw;
+  height: 8vw;
+  max-width: 32px;
+  max-height: 32px;
 }
 .small-flag img {
   width: 100%;
@@ -91,8 +111,7 @@
   margin-left: 6px;
 }
 
-
-/* ========== DARK MODE SUPPORT (HANYA TEKS & IKON) ========== */
+/* ========== DARK MODE SUPPORT (TEKS & IKON) ========== */
 @media (prefers-color-scheme: dark) {
   .title,
   .form-label,
@@ -100,8 +119,8 @@
   .input-item ion-input,
   .input-item ion-icon,
   .chevron-icon {
-    color: #000 !important;     /* agar tetap terlihat di background kuning */
-    --color: #000 !important;   /* untuk token warna Ionic */
+    color: #000 !important;
+    --color: #000 !important;
   }
 
   .id {
@@ -109,6 +128,6 @@
   }
 
   .edit-icon {
-    --background: #00c853; /* tidak berubah di dark mode */
+    --background: #00c853;
   }
 }

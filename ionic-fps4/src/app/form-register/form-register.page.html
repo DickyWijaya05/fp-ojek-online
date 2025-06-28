@@ -1,16 +1,17 @@
-<ion-header>
-  <ion-toolbar class="custom-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/register-option"></ion-back-button>
-    </ion-buttons>
-    <ion-title class="toolbar-title">Isi Data Diri Anda</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="custom-background" fullscreen scroll="true">
   <div class="page-container">
 
+    <!-- Custom Header (tanpa ion-header) -->
+    <div class="custom-header-row">
+      <ion-button fill="clear" size="small" class="back-button" routerLink="/register-option">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+      <h1 class="toolbar-title">Isi Data Diri Anda</h1>
+    </div>
+
+    <!-- Form -->
     <div class="form-section">
+
       <!-- Full Name -->
       <label class="form-label">Full Name</label>
       <ion-item class="input-item">
@@ -54,16 +55,16 @@
           (click)="toggleConfirmPasswordVisibility()" style="cursor: pointer;"></ion-icon>
       </ion-item>
 
-      <!-- Tombol Continue -->
+      <!-- Continue Button -->
       <ion-button expand="block" fill="solid" shape="round" class="continue-button"
         (click)="onContinue()">Continue</ion-button>
 
       <!-- Google Button -->
-      <ion-button expand="block" fill="solid" shape="round" class="social-button google" (click)="registerWithGoogle()">
+      <ion-button expand="block" fill="solid" shape="round" class="social-button google"
+        (click)="registerWithGoogle()">
         <img src="assets/Google.png" class="custom-icon" alt="Google" slot="start" />
         Continue with Google
       </ion-button>
     </div>
-
   </div>
 </ion-content>

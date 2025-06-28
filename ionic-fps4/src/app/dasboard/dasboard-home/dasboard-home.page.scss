@@ -6,28 +6,37 @@
   .back-button {
     color: #000;
     margin-top: 20px;
-    padding-left: 0;
+    padding-left: 16px;
+    z-index: 10;
+    position: relative;
   }
 
   .header-bg {
     background-color: #007f3f;
-    height: 340px;
-    width: 340px;
+    height: 70vw;
+    width: 70vw;
+    max-height: 340px;
+    max-width: 340px;
     border-bottom-left-radius: 100%;
     position: absolute;
     top: 0;
     right: 0;
+    z-index: 0;
   }
 
   .profile-section {
     padding: 20px;
-    padding-top: 100px;
+    padding-top: 120px;
     text-align: left;
     margin-top: 15px;
+    position: relative;
+    z-index: 2;
 
     .profile-image {
-      width: 100px;
-      height: 100px;
+      width: 22vw;
+      max-width: 100px;
+      height: 22vw;
+      max-height: 100px;
       border-radius: 50%;
       border: 3px solid white;
       object-fit: cover;
@@ -36,48 +45,58 @@
 
     .greeting {
       font-weight: bold;
-      font-size: 40px;
+      font-size: 8vw;
+      max-font-size: 40px;
       color: #000;
       margin: 0;
+
+      @media (min-width: 768px) {
+        font-size: 32px;
+      }
     }
 
     .subtitle {
       font-weight: bold;
-      font-size: 24px;
+      font-size: 5.5vw;
       margin-top: 6px;
       margin-bottom: 16px;
       color: #333;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+      }
     }
 
     .location-button {
-      --background: #007f3f; // warna hijau
-      --color: #ffde59; // warna kuning teks
+      --background: #007f3f;
+      --color: #ffde59;
       font-weight: 600;
       margin-top: 37px;
       border-radius: 30px;
-      width: 100% !important;
-      height: auto !important;
+      width: 100%;
       min-height: 48px;
       text-transform: none;
-
-      // Shadow halus ke bawah
       box-shadow: 0 2px 4px #00000029;
-
-      // Hilangkan border default
       border: none;
+      font-size: 4vw;
 
-      // Opsional: padding & ukuran teks
-      padding: 0px 0px;
-      font-size: 16px;
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
     }
   }
 
-  .promo-image {
-    width: 1215px;
-    margin-top: 10px;
-  }
-}
+  .promo-section {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
 
-.halo {
-  font-weight: bold;
+    .promo-image {
+      width: 100%;
+      max-width: 6000px;
+      height: auto;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+  }
 }

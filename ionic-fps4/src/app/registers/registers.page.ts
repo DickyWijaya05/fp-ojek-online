@@ -36,6 +36,9 @@ export class RegistersPage implements OnInit {
   }
 
   async onContinue() {
+    // ✅ Tambahan baris ini untuk menghindari error aria-hidden
+    (document.activeElement as HTMLElement)?.blur();
+
     const passwordRegex = /^[A-Z][a-zA-Z0-9]*[0-9]+[a-zA-Z0-9]*$/;
 
     if (
