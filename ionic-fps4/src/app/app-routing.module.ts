@@ -119,7 +119,15 @@ const routes: Routes = [
   {
     path: 'login-option',
     loadChildren: () => import('./login-option/login-option.module').then( m => m.LoginOptionPageModule)
+  },  {
+    path: 'payment',
+    loadChildren: () => import('./payment/payment.module').then( m => m.PaymentPageModule)
+  },
+  {
+    path: 'rating',
+    loadChildren: () => import('./rating/rating.module').then( m => m.RatingPageModule)
   }
+
 ];
 
 @NgModule({

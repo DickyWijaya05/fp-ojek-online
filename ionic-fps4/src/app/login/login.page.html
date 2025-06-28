@@ -1,19 +1,14 @@
-<ion-header>
-  <ion-toolbar class="custom-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login-option"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Login Driver</ion-title>
-  </ion-toolbar>
-</ion-header>
+<!-- Back Button + Title -->
+<div class="header-row">
+  <ion-button fill="clear" size="large" class="back-button" routerLink="/login-option">
+    <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+  </ion-button>
+  <h1 class="page-title">Login Driver</h1>
+</div>
 
 
 <ion-content class="ion-padding custom-background">
   <!-- Refresher -->
-  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content pullingText="Tarik untuk refresh" refreshingText="Merefresh..." refreshingSpinner="circles">
-    </ion-refresher-content>
-  </ion-refresher>
 
   <!-- Logo -->
   <div class="logo-container">

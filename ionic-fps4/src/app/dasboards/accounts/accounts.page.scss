@@ -1,4 +1,7 @@
-/* ========== Warna Dasar ========== */
+
+/* ========== DEFAULT (LIGHT MODE) ========== */
+
+/* Warna latar sesuai mockup */
 .custom-background {
   --background: #fcd949;
   background-color: #fcd949;
@@ -12,26 +15,21 @@
   gap: 10px;
 }
 
-/* ========== Header ========== */
-.profile-header {
-  padding: 16px 12px;
-  border-bottom: 2px solid #000;
-  background: transparent;
-}
-
 .title {
   font-size: 26px;
   font-weight: bold;
   color: #000;
   margin: 0;
+  padding-left: 12px;
+  margin-top: 20px;
+  color: #000;
 }
 
 /* ========== Avatar + Edit Icon ========== */
 .avatar-wrapper {
-  display: flex;
-  align-items: center;
-  padding-left: 12px;
+  padding: 20px 0 12px 12px;
   position: relative;
+  margin-bottom: 20px;
 }
 
 .profile-avatar {
@@ -41,10 +39,9 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Edit icon di pojok kanan bawah */
 .edit-icon {
   position: absolute;
-  bottom: 0;
+  bottom: 8px;
   left: 88px;
   --background: #00c853;
   width: 28px;
@@ -58,11 +55,11 @@
 
 /* ========== Form Style ========== */
 .form-section {
-  padding: 0 16px;
+  padding: 0 8px;
 }
 
 .form-label {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #222;
   margin: 12px 0 4px;
@@ -71,30 +68,23 @@
 .input-item {
   --background: #fff;
   --padding-start: 14px;
-  --min-height: 50px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  font-size: 15px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-}
-
-/* input dan select text color */
-ion-input,
-ion-select,
-ion-select-option {
-  color: #000 !important;
-}
-
-/* Gender text (non-edit) */
-.readonly-gender {
+  --min-height: 70px;
+  border-radius: 15px;
+  margin-bottom: 18px;
   font-size: 16px;
-  color: #000;
-  padding-left: 10px;
-  line-height: 44px;
+  color: #000; /* teks default */
 }
 
-/* Bendera kecil */
+.input-item ion-icon,
+.chevron-icon {
+  font-size: 20px;
+  color: #000;
+}
+
+.id {
+  border: 1px solid black;
+}
+
 .small-flag {
   width: 32px;
   height: 32px;
@@ -108,17 +98,26 @@ ion-select-option {
 
 .chevron-icon {
   margin-left: 6px;
-  color: #333;
 }
 
-/* ========== Tombol ========== */
-ion-button {
-  margin: 10px 16px;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-}
 
-ion-button[color="success"] {
-  --background: #00c853;
+/* ========== DARK MODE SUPPORT (HANYA TEKS & IKON) ========== */
+@media (prefers-color-scheme: dark) {
+  .title,
+  .form-label,
+  .input-item,
+  .input-item ion-input,
+  .input-item ion-icon,
+  .chevron-icon {
+    color: #000 !important;     /* agar tetap terlihat di background kuning */
+    --color: #000 !important;   /* untuk token warna Ionic */
+  }
+
+  .id {
+    border: 1px solid #000;
+  }
+
+  .edit-icon {
+    --background: #00c853; /* tidak berubah di dark mode */
+  }
 }

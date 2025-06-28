@@ -1,17 +1,16 @@
-<ion-header>
-  <ion-toolbar class="custom-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/register-option"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Isi Data Diri Anda</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="ion-padding custom-background" fullscreen scroll="true">
   <div class="page-container">
-    <!-- Form -->
-    <div class="form-section">
+    
+    <!-- Custom Header (Tanpa ion-header) -->
+    <div class="custom-header-row">
+      <ion-button fill="clear" size="small" class="back-button" routerLink="/register-option">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+      <h1 class="page-title">Register Driver</h1>
+    </div>
 
+    <!-- Form Section -->
+    <div class="form-section">
       <!-- Full Name -->
       <ion-label class="form-label">Nama Lengkap</ion-label>
       <ion-item class="input-item">
@@ -25,7 +24,7 @@
         <ion-input placeholder="Email" type="email" [(ngModel)]="email" required></ion-input>
       </ion-item>
 
-      <!-- Phone Number -->
+      <!-- Phone -->
       <ion-label class="form-label">Nomor Telepon</ion-label>
       <ion-item class="input-item">
         <ion-avatar slot="start" class="small-flag">
@@ -67,10 +66,9 @@
           style="cursor: pointer;">
         </ion-icon>
       </ion-item>
-
     </div>
 
-    <!-- Continue Button -->
+    <!-- Button -->
     <div class="button-wrapper">
       <ion-button expand="block" shape="round" class="continue-button" (click)="onContinue()">
         Continue

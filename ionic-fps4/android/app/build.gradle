@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "io.ionic.starter"
+    namespace "com.gocabs.myapp"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.gocabs.myapp"
@@ -15,10 +15,14 @@ android {
         ]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // ✅ Tambahkan baris ini:
+        manifestPlaceholders = [ appAuthRedirectScheme: "com.gocabs.myapp" ]
         aaptOptions {
             // Ignore certain files from packaged assets
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
+
     }
     buildTypes {
         release {

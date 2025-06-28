@@ -60,8 +60,16 @@ ion-input::part(native) {
 }
 
 .button-wrapper {
-  margin-top: 24px;
-  width: 100%;
+font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  --background: #197C34;
+  color: #fddf5c;
+  border-radius: 30px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 48px;
+  margin-top: 30px;
+  text-transform: none;
 }
 
 .submit-button {
