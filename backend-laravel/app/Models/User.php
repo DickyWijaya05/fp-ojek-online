@@ -46,4 +46,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+        // Relasi ke customers
+    public function driverDocument()
+    {
+    return $this->hasOne(DriverDocument::class, 'user_id');
+    }
+    public function customer()
+{
+    return $this->hasOne(\App\Models\Customer::class, 'user_id');
+}
+
+public function driver()
+{
+    return $this->hasOne(Driver::class, 'user_id');
+}
+
+
+
 }

@@ -1,9 +1,24 @@
+<ion-header>
+  <ion-toolbar style="--background: #ffde59; --color: #000000;">
+    
+
+    <!-- Toggle status di pojok kanan atas -->
+    <ion-buttons slot="end">
+      <ion-toggle
+        [(ngModel)]="isOnline"
+        (ionChange)="toggleStatus()"
+        style="margin-right: 8px;"
+      ></ion-toggle>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
 <ion-content class="ion-padding custom-background">
-  <div class="profile-section">
-    <img src="assets/Logo.png" alt="logo">
-    <h2>Hallo Driver, Username</h2>
+  <div class="profile-section" style="text-align: center;">
+    <img src="assets/Logo.png" alt="logo" />
+    <h2>Hallo Driver, {{ user?.name || 'Username' }}</h2>
     <p>Siap Narik Nih??</p>
->>>>>>> update-front-end
   </div>
 
   <ion-button expand="block" shape="round" class="search-customer-button" (click)="goToLokasi()">

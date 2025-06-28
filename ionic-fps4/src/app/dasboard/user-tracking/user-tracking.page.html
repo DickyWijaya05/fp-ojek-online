@@ -1,32 +1,142 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Pilih Lokasi</ion-title>
+<ion-header translucent>
+  <ion-toolbar class="modern-toolbar">
+    <ion-title>🗺️ Lokasi Saya</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-item>
-    <ion-label position="floating">Lokasi Awal</ion-label>
-    <ion-input [(ngModel)]="startQuery" (keyup.enter)="searchLocation('start')"></ion-input>
-  </ion-item>
+<ion-content fullscreen class="ion-padding page-modern">
+  <!-- 🌍 Map -->
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
 
-  <ion-item>
-    <ion-label position="floating">Lokasi Tujuan</ion-label>
-    <ion-input [(ngModel)]="destQuery" (keyup.enter)="searchLocation('dest')"></ion-input>
-  </ion-item>
+  <!-- 📝 Form Input -->
+  <div class="form-wrapper" *ngIf="driverStatus === 'idle'">
+    <ion-item lines="none" class="input-modern">
+      <ion-icon name="navigate-outline" slot="start"></ion-icon>
+      <ion-input [(ngModel)]="startQuery" placeholder="Masukkan Lokasi Awal"
+        (keyup.enter)="searchLocation('start')"></ion-input>
+    </ion-item>
 
-  <div id="map" style="height: 400px; margin: 10px 0;"></div>
+    <ion-item lines="none" class="input-modern">
+      <ion-icon name="flag-outline" slot="start"></ion-icon>
+      <ion-input [(ngModel)]="destQuery" placeholder="Masukkan Lokasi Tujuan"
+        (keyup.enter)="searchLocation('dest')"></ion-input>
+    </ion-item>
 
-  <ion-button expand="block" color="primary" (click)="saveLocations()">Simpan Lokasi</ion-button>
+    <ion-button expand="block" color="tertiary" shape="round" class="btn-modern" (click)="findNearestDriver()">
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      Cari Driver Terdekat
+    </ion-button>
 
-  <ion-card *ngIf="startCoords && destCoords">
-    <ion-card-header>
-      <ion-card-title>📝 Lokasi Tersimpan</ion-card-title>
-    </ion-card-header>
+    <ion-button expand="block" color="success" shape="round" class="btn-modern" (click)="saveLocations()">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      Simpan & Hitung Rute
+    </ion-button>
+  </div>
+
+  <!-- ⏳ Loading Driver -->
+  <ion-card class="card-modern animate-pulse" *ngIf="driverStatus === 'searching'">
     <ion-card-content>
-      <p><strong>Awal:</strong> {{ startCoords.lat.toFixed(6) }}, {{ startCoords.lng.toFixed(6) }}</p>
-      <p><strong>Tujuan:</strong> {{ destCoords.lat.toFixed(6) }}, {{ destCoords.lng.toFixed(6) }}</p>
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <h2>Mencari driver terdekat...</h2>
+      <p class="text-muted">Harap tunggu, kami sedang mencarikan driver terbaik untuk Anda.</p>
+      <ion-button expand="block" fill="outline" color="danger" shape="round" (click)="driverStatus = 'idle'">
+        Batal
+      </ion-button>
     </ion-card-content>
   </ion-card>
+
+  <!-- ✅ Driver Found -->
+  <ion-card class="card-modern" *ngIf="driverStatus === 'found' && selectedDriver">
+    <ion-item lines="none">
+      <ion-avatar slot="start">
+        <img src="assets/driver.png" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ selectedDriver.user.name }}</h2>
+        <p><ion-icon name="call-outline"></ion-icon> {{ selectedDriver.user.phone ?? '08xxxx' }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-card-content>
+      <p> Test</p>
+      <ion-button expand="block" color="primary" shape="round" (click)="showDriverInfo()">Lihat Info Driver</ion-button>
+      <ion-button expand="block" color="success" (click)="orderDriver()">🚖 Order Driver</ion-button>
+      <ion-button expand="block" fill="outline" color="medium" shape="round"
+        (click)="driverStatus = 'idle'">Cancel</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 🧍 Detail Driver -->
+  <ion-card class="card-modern" *ngIf="driverStatus === 'info' && selectedDriver">
+    <ion-item lines="none">
+      <ion-avatar slot="start">
+        <img src="assets/driver.png" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ selectedDriver.user.name }}</h2>
+        <p>{{ selectedDriver.user.phone ?? '-' }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-card-content>
+      <p>⭐ 4.8 | 9205 Order</p>
+      <p><ion-icon name="car-outline"></ion-icon> {{ selectedDriver.vehicle ?? 'Beat' }} • {{ selectedDriver.color ??
+        'Merah' }}</p>
+      <p><ion-icon name="pricetag-outline"></ion-icon> Plat: {{ selectedDriver.plate_number ?? 'T 7564 NU' }}</p>
+
+      <ion-button expand="block" color="success" shape="round">
+        <ion-icon slot="start" name="call"></ion-icon> Call
+      </ion-button>
+
+      <ion-button expand="block" color="secondary" shape="round">
+        <ion-icon slot="start" name="chatbubbles"></ion-icon> Chat
+      </ion-button>
+
+      <ion-button expand="block" shape="round" fill="outline" (click)="driverStatus = 'found'">
+        Kembali
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 🕒 Status Order -->
+  <ion-card class="status-card" *ngIf="orderStatus">
+    <ion-card-content>
+      <ion-icon name="information-circle" color="primary"></ion-icon>
+      <strong>Status Order:</strong>
+      <p>{{ getReadableStatus(orderStatus) }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 🛵 Status Driver -->
+  <ion-card class="card-modern" *ngIf="orderStatus === 'accepted' || orderStatus === 'on_the_way'">
+    <ion-card-content>
+      <ion-icon name="bicycle-outline" color="success"></ion-icon>
+      <strong>Driver sedang menuju Anda...</strong>
+      <p>Kami akan mengirim notifikasi saat driver tiba di lokasi.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="orderStatus === 'pickupReached'" class="full-page-banner">
+    <div class="banner-content">
+      <img src="assets/Logo.png" class="banner-icon" />
+      <h2>🚖 Driver Tiba!</h2>
+      <p>Driver sudah sampai di titik jemput. Silakan naik dan bersiap menuju tujuan.</p>
+      <ion-button expand="block" color="success" (click)="lanjutKeTujuan()">OK, Saya Sudah Naik</ion-button>
+    </div>
+  </div>
+
+  <!-- 🛵 Dalam Perjalanan ke Tujuan -->
+  <ion-card class="card-modern" *ngIf="orderStatus === 'toDestination'">
+    <ion-card-header>
+      <ion-card-title>🚀 Dalam Perjalanan</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Driver sedang <strong>mengantar Anda</strong> ke tujuan.</p>
+      <ion-button expand="block" fill="solid" color="warning" disabled>
+        DALAM PERJALANAN...
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+
 </ion-content>
-<app-custom-tab-bar></app-custom-tab-bar>

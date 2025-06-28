@@ -17,12 +17,14 @@
         <ion-input [(ngModel)]="vehicleName" name="vehicleName" placeholder="Contoh: Honda Beat"></ion-input>
       </ion-item>
 
-      <label class="form-label">Jenis Kendaraan</label>
+      <label class="form-label">Nomor Kendaraan (Plat Nomor)</label>
       <ion-item class="input-item">
-        <ion-select [(ngModel)]="vehicleType" name="vehicleType" placeholder="Pilih jenis kendaraan">
-          <ion-select-option value="motor">Motor</ion-select-option>
-          <ion-select-option value="mobil">Mobil</ion-select-option>
-        </ion-select>
+        <ion-input [(ngModel)]="plateNumber" name="plateNumber" placeholder="Contoh: B 1234 ABC"></ion-input>
+      </ion-item>
+
+      <label class="form-label">Warna Kendaraan</label>
+      <ion-item class="input-item">
+        <ion-input [(ngModel)]="vehicleColor"name="vehicleColor" placeholder="Contoh: Hitam, Putih"></ion-input>
       </ion-item>
 
       <label class="form-label">Foto KTP</label>
@@ -45,7 +47,7 @@
         <input type="file" (change)="onFileChange($event, 'stnk')" accept="image/*" />
       </ion-item>
 
-      <label class="form-label">Foto Kendaraan</label>
+      <label class="form-label">Foto Kendaraan (Plat Nomer Jelas)</label>
       <ion-item class="input-item">
         <input type="file" (change)="onFileChange($event, 'vehicle_photo')" accept="image/*" />
       </ion-item>

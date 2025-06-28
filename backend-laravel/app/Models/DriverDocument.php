@@ -10,21 +10,21 @@ class DriverDocument extends Model
     use HasFactory;
 
     protected $fillable = [
-        'driver_id',
+        'user_id', 
         'ktp',
         'selfie_ktp',
         'sim',
         'stnk',
         'pas_photo',
         'vehicle_photo',
-        'vehicle_type',
         'vehicle_name',
+        'vehicle_color', 
+        'plate_number',  
         'status',
     ];
 
-    public function driver()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'driver_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
-
