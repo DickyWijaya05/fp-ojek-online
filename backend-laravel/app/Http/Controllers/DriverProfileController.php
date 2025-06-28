@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use App\Models\User;
 
 class DriverProfileController extends Controller
@@ -19,21 +18,22 @@ class DriverProfileController extends Controller
                 return response()->json(['message' => 'Unauthorized or not a driver'], 403);
             }
 
-            $driver = $user->driver;
-
-            if (!$driver) {
-                return response()->json(['message' => 'Driver profile not found'], 404);
-            }
+            // Ambil atau buat data driver jika belum ada
+            $driver = $user->driver ?? $user->driver()->create([
+                'user_id' => $user->id,
+                'status' => 'aktif',
+                'rating' => 0
+            ]);
 
             return response()->json([
-                'name'         => $user->name,
-                'email'        => $user->email,
-                'phone'        => $user->phone,
-                'foto_profil'  => $driver->foto_profil ? asset('storage/' . $driver->foto_profil) : null,
-                'gender'       => $driver->jenis_kelamin === 'L' ? 'Male' : ($driver->jenis_kelamin === 'P' ? 'Female' : null),
-                'status'       => $driver->status,
-                'rating'       => $driver->rating,
-                'alamat'       => $driver->alamat,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'foto_profil' => $driver->foto_profil ? asset('storage/profiles/' . $driver->foto_profil) : null,
+                'gender' => $driver->jenis_kelamin === 'L' ? 'Male' : ($driver->jenis_kelamin === 'P' ? 'Female' : null),
+                'status' => $driver->status,
+                'rating' => $driver->rating,
+                'alamat' => $driver->alamat,
             ]);
         } catch (\Throwable $e) {
             Log::error('DriverProfile error: ' . $e->getMessage());
@@ -50,20 +50,21 @@ class DriverProfileController extends Controller
                 return response()->json(['message' => 'Unauthorized or not a driver'], 403);
             }
 
-            $driver = $user->driver;
+            $driver = $user->driver ?? $user->driver()->create([
+                'user_id' => $user->id,
+                'status' => 'aktif',
+                'rating' => 0
+            ]);
 
             $validated = $request->validate([
-                'name'          => 'nullable|string|max:255',
-                'phone'         => 'nullable|string|max:255',
+                'name' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:255',
                 'jenis_kelamin' => 'nullable|in:L,P',
-                'alamat'        => 'nullable|string|max:255'
+                'alamat' => 'nullable|string|max:255'
             ]);
 
             $user->fill(array_filter($validated, fn($v, $k) => in_array($k, ['name', 'phone']), ARRAY_FILTER_USE_BOTH))->save();
-
-            if ($driver) {
-                $driver->fill(array_filter($validated, fn($v, $k) => in_array($k, ['jenis_kelamin', 'alamat']), ARRAY_FILTER_USE_BOTH))->save();
-            }
+            $driver->fill(array_filter($validated, fn($v, $k) => in_array($k, ['jenis_kelamin', 'alamat']), ARRAY_FILTER_USE_BOTH))->save();
 
             return response()->json(['message' => 'Profile updated']);
         } catch (\Throwable $e) {
@@ -75,39 +76,34 @@ class DriverProfileController extends Controller
     public function uploadPhoto(Request $request)
     {
         try {
-            $request->validate([
-                'foto_profil' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            ]);
-
-            $user = $request->user();
+            $user = auth()->user();
 
             if (!$user || $user->level_id != 2) {
-                return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json(['error' => 'Unauthorized or not a driver'], 403);
             }
 
-            $driver = $user->driver;
+            $driver = $user->driver ?? $user->driver()->create([
+                'user_id' => $user->id,
+                'status' => 'aktif',
+                'rating' => 0
+            ]);
 
-            if (!$driver) {
-                return response()->json(['message' => 'Driver not found'], 404);
-            }
+            $request->validate([
+                'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
 
-            if ($driver->foto_profil) {
-                Storage::disk('public')->delete($driver->foto_profil);
-            }
+            $path = $request->file('foto_profil')->store('public/profiles');
+            $filename = basename($path);
 
-            $file = $request->file('foto_profil');
-            $path = $file->store('driver_foto', 'public');
-
-            $driver->foto_profil = $path;
+            $driver->foto_profil = $filename;
             $driver->save();
 
             return response()->json([
-                'message'     => 'Foto profil berhasil diunggah',
-                'foto_profil' => asset('storage/' . $path)
+                'foto_profil' => asset('storage/profiles/' . $filename)
             ]);
         } catch (\Throwable $e) {
-            Log::error('Upload photo error: ' . $e->getMessage());
-            return response()->json(['message' => 'Upload failed'], 500);
+            Log::error('Upload driver photo error: ' . $e->getMessage());
+            return response()->json(['message' => 'Failed to upload photo'], 500);
         }
     }
 }
