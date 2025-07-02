@@ -105,6 +105,7 @@ Route::middleware(['auth:sanctum', 'is_driver'])->group(function () {
     Route::post('/driver/accept-order/{id}', [OrderController::class, 'acceptOrder']);
     Route::post('/driver/reject-order/{id}', [OrderController::class, 'rejectOrder']);
     Route::get('/driver/incoming-order', [OrderController::class, 'incomingOrder']);
+    Route::get('/driver/transactions', [TransactionController::class, 'driverTransactions']);
 
     // Upload dokumen
     Route::post('/driver/documents', [DriverDocumentController::class, 'upload']);

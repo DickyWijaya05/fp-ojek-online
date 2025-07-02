@@ -3,7 +3,6 @@
 
   <div class="tab">
     <div class="tab-item" [class.active]="selectedTab==='riwayat'" (click)="selectedTab='riwayat'">Riwayat</div>
-    <div class="tab-item" [class.active]="selectedTab==='dalamProses'" (click)="selectedTab='dalamProses'">Dalam Proses</div>
   </div>
 
   <!-- Riwayat List -->
@@ -23,19 +22,5 @@
     </ion-item>
   </ion-list>
 
-  <!-- Dalam Proses List -->
-  <ion-list lines="none" *ngIf="selectedTab==='dalamProses'">
-    <ion-item *ngFor="let item of prosesList" class="transaction-item">
-      <ion-thumbnail slot="start">
-        <img src="assets/Icon Motor hijau kuning 1.png" alt="transaction-img" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ item.start_address }} ➜ {{ item.dest_address }}</h2>
-        <p>Menunggu penyelesaian...</p>
-      </ion-label>
-      <span class="transaction-amount">
-        {{ item.total_price | currency:'IDR':'symbol':'1.0-0' }}
-      </span>
-    </ion-item>
-  </ion-list>
+
 </ion-content>

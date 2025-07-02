@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: false,
@@ -23,7 +24,7 @@ export class AccountsPage implements OnInit {
 
   isEditing = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit() {
     this.loadProfile();
@@ -125,5 +126,10 @@ export class AccountsPage implements OnInit {
 
   triggerQrisInput() {
     this.qrisInput.nativeElement.click();
+  }
+
+  logout() {
+    localStorage.removeItem('driver_token');
+    this.router.navigate(['/login']); // arahkan ke halaman login
   }
 }

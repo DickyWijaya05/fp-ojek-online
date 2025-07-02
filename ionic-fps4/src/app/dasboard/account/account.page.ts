@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   standalone:false,
@@ -13,7 +14,7 @@ export class AccountPage implements OnInit {
   profile: any = null;
   isEditing: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     console.log('AccountPage Loaded');
@@ -68,4 +69,10 @@ export class AccountPage implements OnInit {
   triggerFileInput() {
     this.fileInput.nativeElement.click();
   }
+
+  logout() {
+  localStorage.removeItem('token'); // Hapus token customer
+  window.location.href = '/login-costumer'; // Atau pakai router.navigate(['/login']) kalau routing Angular
+}
+
 }

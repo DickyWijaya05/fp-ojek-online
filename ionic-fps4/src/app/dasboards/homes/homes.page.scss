@@ -1,11 +1,8 @@
 .custom-background {
   --background: #ffde59;
-  position: relative;
-  padding: 0;
-  padding-bottom: 20px;
+  padding: 0 16px 20px;
   color: #000000;
 
-  // Warna kuning untuk header
   ion-toolbar {
     --background: #ffde59;
     --color: #000000;
@@ -14,23 +11,52 @@
   .profile-section {
     text-align: center;
 
-    img {
-      width: 190px;
-      margin-top: 50px;
-      margin-bottom: 1px;
-    }
-
     h2 {
-      font-size: 35px;
-      font-weight: 900;
+      font-size: 8vw;
+      font-weight: bold;
       color: #000000;
-      margin-bottom: 4px;
+      margin: 12px 0 4px;
+
+      @media (min-width: 768px) {
+        font-size: 32px;
+      }
     }
 
     p {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 4.5vw;
+      font-weight: 700;
       color: #000000;
+
+      @media (min-width: 768px) {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .avatar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 8vw;
+    margin-bottom: 4vw;
+
+    ion-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+      @media (min-width: 768px) {
+        width: 100px;
+        height: 100px;
+      }
+    }
+
+    img {
+      width: 50%;
+      height: 50%;
+      object-fit: cover;
+      border-radius: 50%;
     }
   }
 
@@ -38,23 +64,28 @@
     --background: #007f3f;
     --color: #ffde59;
     font-weight: 600;
-    margin-top: 37px;
+    margin-top: 32px;
     border-radius: 30px;
     width: 100%;
     min-height: 48px;
     text-transform: none;
-    box-shadow: 0 2px 4px #00000029;
     border: none;
-    padding: 0;
-    font-size: 16px;
+    padding: 0 16px;
+    font-size: 3.8vw;
+
+    @media (min-width: 768px) {
+      font-size: 16px;
+    }
   }
 
   .promo-section {
     text-align: center;
 
     .promo-image {
-        width: 1500px;
-        margin-top: 10px;
+      width: 100%;
+      max-width: 700px;
+      height: auto;
+      margin-top: 20px;
     }
   }
 }

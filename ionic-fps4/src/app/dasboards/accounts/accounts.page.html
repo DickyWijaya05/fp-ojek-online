@@ -61,8 +61,8 @@
         </ion-select>
       </ion-item>
 
-      <!-- Date of Birth -->
-      <ion-label class="form-label">Date of Birth</ion-label>
+      <!-- Alamat -->
+      <ion-label class="form-label">Alamat</ion-label>
       <ion-item class="input-item">
         <ion-input *ngIf="!isEditing" [value]="profile.date_of_birth" readonly>
         </ion-input>
@@ -98,4 +98,10 @@
       Simpan Perubahan
     </ion-button>
   </div>
+
+  <ion-button expand="block" color="danger" (click)="logout()">
+  <ion-icon slot="start" name="log-out-outline"></ion-icon>
+  Logout
+</ion-button>
+
 </ion-content>

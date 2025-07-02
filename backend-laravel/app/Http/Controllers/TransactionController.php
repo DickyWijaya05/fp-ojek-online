@@ -76,4 +76,32 @@ class TransactionController extends Controller
         'data' => $data,
     ]);
 }
+
+
+public function driverTransactions(Request $request)
+{
+    $driver = $request->user(); // user yang login (driver)
+
+    $data = Transaction::with(['order', 'customer']) // relasi ke customer
+        ->where('driver_id', $driver->id)
+        ->latest()
+        ->get()
+        ->map(function ($trx) {
+            return [
+                'id' => $trx->id,
+                'total_price' => $trx->total_price,
+                'distance' => $trx->distance,
+                'duration' => $trx->duration,
+                'created_at' => $trx->created_at->toDateTimeString(),
+                'start_address' => optional($trx->order)->start_address,
+                'dest_address' => optional($trx->order)->dest_address,
+                'customer_name' => optional($trx->customer)->name ?? null,
+            ];
+        });
+
+    return response()->json([
+        'data' => $data
+    ]);
+}
+
 }
