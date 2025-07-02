@@ -9,19 +9,21 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AccountsPage implements OnInit {
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('qrisInput', { static: false }) qrisInput!: ElementRef<HTMLInputElement>;
 
   profile: any = {
     name: '',
     email: '',
     phone: '',
     foto_profil: '',
+    foto_qris: '',
     gender: '',
     date_of_birth: ''
   };
 
   isEditing = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.loadProfile();
@@ -29,22 +31,31 @@ export class AccountsPage implements OnInit {
 
   loadProfile() {
     const token = localStorage.getItem('driver_token');
+    if (!token) {
+      console.error('Token tidak ditemukan.');
+      return;
+    }
+
     this.http.get('http://localhost:8000/api/driver/profile', {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).subscribe({
       next: (res: any) => {
+        console.log('📦 Data profil driver dari backend:', res); // ⬅️ Tambahkan ini
         this.profile = res;
       },
       error: (err) => {
-        console.error('Gagal mengambil profil driver:', err);
+        console.error('❌ Gagal mengambil profil driver:', err);
       }
     });
   }
 
+
   saveProfile() {
     const token = localStorage.getItem('driver_token');
+    if (!token) return;
+
     const data = {
       name: this.profile.name,
       phone: this.profile.phone,
@@ -64,7 +75,14 @@ export class AccountsPage implements OnInit {
 
   uploadPhoto(event: any) {
     const token = localStorage.getItem('driver_token');
+    if (!token) return;
+
     const file = event.target.files[0];
+    if (!file) {
+      console.error('Tidak ada file foto profil dipilih.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('foto_profil', file);
 
@@ -74,10 +92,38 @@ export class AccountsPage implements OnInit {
       }
     }).subscribe((res: any) => {
       this.profile.foto_profil = res.foto_profil;
+      this.loadProfile(); // refresh data
+    });
+  }
+
+  uploadQris(event: any) {
+    const token = localStorage.getItem('driver_token');
+    if (!token) return;
+
+    const file = event.target.files[0];
+    if (!file) {
+      console.error('Tidak ada file QRIS dipilih.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('foto_qris', file);
+
+    this.http.post('http://localhost:8000/api/driver/profile/upload-qris', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).subscribe((res: any) => {
+      this.profile.foto_qris = res.foto_qris;
+      this.loadProfile(); // refresh data
     });
   }
 
   triggerFileInput() {
     this.fileInput.nativeElement.click();
+  }
+
+  triggerQrisInput() {
+    this.qrisInput.nativeElement.click();
   }
 }

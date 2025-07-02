@@ -2,6 +2,35 @@
   height: 100%;
   width: 100%;
 }
+
+// 🔶 Kartu Modern dengan Background Kuning
+.card-modern {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 400px;
+  background-color: #ffde59 !important;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+ion-card-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+ion-card-content p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #222;
+}
+
+// 🎉 Perjalanan Selesai Style
 .payment-confirmation {
   position: absolute;
   top: 20%;
@@ -9,9 +38,9 @@
   transform: translateX(-50%);
   width: 90%;
   max-width: 400px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #ffde59 !important;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   padding: 24px;
   text-align: center;
   z-index: 999;
@@ -21,4 +50,9 @@
   width: 80px;
   height: 80px;
   margin-bottom: 16px;
+}
+
+ion-button {
+  margin-top: 10px;
+  font-weight: bold;
 }

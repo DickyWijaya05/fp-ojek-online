@@ -16,14 +16,18 @@ export class DriverTrackingPage {
   currentLat: number = 0;
   currentLng: number = 0;
   acceptedOrderId: number | null = null;
+  driverId: number | null = null;
   incomingOrder: any = null;
   stepStatus: 'accepted' | 'pickupReached' | 'toDestination' | 'completed' | null = null;
   pickupMarker: L.Marker | undefined;
   destinationMarker: L.Marker | undefined;
   routeLine: L.Layer | undefined;
+  selectedMethod: string = '';
 
 
   async ionViewDidEnter() {
+    const success = await this.ambilProfilDriver(); // ⬅️ Panggil di awal
+    if (!success) return;
     const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
 
     this.currentLat = position.coords.latitude;
@@ -73,9 +77,10 @@ export class DriverTrackingPage {
     setInterval(() => this.simpanLokasi(), 15000);
   }
 
+
   async ionViewWillLeave() {
     const token = localStorage.getItem('driver_token');
-    if (!token) return;
+    if (!token) { alert('Token tidak ditemukan. Silakan login ulang.'); return; }
 
     try {
       await axios.post('http://localhost:8000/api/driver-status',
@@ -113,6 +118,36 @@ export class DriverTrackingPage {
       console.error('❌ Gagal simpan lokasi:', error);
     }
   }
+
+  async ambilProfilDriver() {
+    const token = localStorage.getItem('driver_token');
+    if (!token) {
+      alert('Token tidak ditemukan. Silakan login ulang.');
+      return false;
+    }
+
+    try {
+      const res = await axios.get('http://localhost:8000/api/driver/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      console.log('🧾 Data profil driver:', res.data);
+
+      // Cek jika struktur nested
+      this.driverId = res.data.driver?.id ?? res.data.id;
+
+      if (!this.driverId) {
+        throw new Error('ID driver tidak ditemukan di response');
+      }
+
+      return true;
+    } catch (err) {
+      console.error('❌ Gagal ambil profile driver:', err);
+      alert('Gagal mengambil data driver. Silakan login ulang.');
+      return false;
+    }
+  }
+
 
   async acceptOrder() {
     if (!this.incomingOrder) return;
@@ -201,34 +236,34 @@ export class DriverTrackingPage {
     }
   }
 
-async sudahSampaiJemput() {
-  if (!this.incomingOrder) return;
+  async sudahSampaiJemput() {
+    if (!this.incomingOrder) return;
 
-  const token = localStorage.getItem('driver_token');
-  try {
-    await axios.post(`http://localhost:8000/api/driver/order-status/${this.incomingOrder.id}`, {
-      status: 'pickupReached'
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    // ✅ Sukses kirim ke backend
-    this.stepStatus = 'pickupReached';
-
-    // 🔊 Mainkan suara lokal untuk konfirmasi
-    const audio = new Audio('assets/sound/arrived.mp3');
+    const token = localStorage.getItem('driver_token');
     try {
-      await audio.play();
-    } catch (err) {
-      console.warn('Gagal play suara:', err);
-    }
+      await axios.post(`http://localhost:8000/api/driver/order-status/${this.incomingOrder.id}`, {
+        status: 'pickupReached'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    alert('✅ Notifikasi "Sudah Sampai Jemput" dikirim ke penumpang!');
-  } catch (err) {
-    console.error('❌ Gagal kirim status pickupReached:', err);
-    alert('❌ Gagal mengirim notifikasi ke penumpang.');
+      // ✅ Sukses kirim ke backend
+      this.stepStatus = 'pickupReached';
+
+      // 🔊 Mainkan suara lokal untuk konfirmasi
+      const audio = new Audio('assets/sound/arrived.mp3');
+      try {
+        await audio.play();
+      } catch (err) {
+        console.warn('Gagal play suara:', err);
+      }
+
+      alert('✅ Notifikasi "Sudah Sampai Jemput" dikirim ke penumpang!');
+    } catch (err) {
+      console.error('❌ Gagal kirim status pickupReached:', err);
+      alert('❌ Gagal mengirim notifikasi ke penumpang.');
+    }
   }
-}
 
 
 
@@ -273,38 +308,88 @@ async sudahSampaiJemput() {
     }
   }
 
-async completeTrip() {
-  this.stepStatus = 'completed';
+  async completeTrip() {
 
-  alert('🎉 Perjalanan selesai!');
+    if (!this.incomingOrder) return;
+    const token = localStorage.getItem('driver_token');
+    const orderId = this.incomingOrder.id;
 
-  if (!this.incomingOrder) return;
-  const token = localStorage.getItem('driver_token');
-  const orderId = this.incomingOrder.id;
+    try {
+      await axios.post(`http://localhost:8000/api/driver/order-status/${orderId}`, {
+        status: 'completed'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-  try {
-    // ✅ Kirim status ke backend untuk update dan trigger notifikasi FCM ke customer
-    await axios.post(`http://localhost:8000/api/driver/order-status/${orderId}`, {
-      status: 'completed'
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+      console.log('✅ Status Order Di Ubah Ke Komplit');
+      this.stepStatus = 'completed';
+      alert('🎉 Perjalanan selesai! Penumpang akan diminta membayar.');
 
-    console.log('✅ Notifikasi pembayaran dikirim ke pelanggan');
-  } catch (err) {
-    console.error('❌ Gagal kirim notifikasi pembayaran ke pelanggan:', err);
+    } catch (err) {
+      console.error('❌ Gagal kirim notifikasi pembayaran ke pelanggan:', err);
+    }
   }
-}
 
-resetTracking() {
-  this.stepStatus = null;
-  this.acceptedOrderId = null;
-  this.incomingOrder = null;
+  async konfirmasiPembayaran() {
+    if (!this.incomingOrder) return;
 
-  if (this.routeLine) this.map?.removeLayer(this.routeLine);
-  if (this.pickupMarker) this.map?.removeLayer(this.pickupMarker);
-  if (this.destinationMarker) this.map?.removeLayer(this.destinationMarker);
-}
+    if (!this.selectedMethod) {
+      alert('⚠️ Silakan pilih metode pembayaran terlebih dahulu.');
+      return;
+    }
+
+    const token = localStorage.getItem('driver_token');
+
+    if (!this.driverId) {
+      const success = await this.ambilProfilDriver();
+      if (!success || !this.driverId) {
+
+        alert('Tidak bisa mendapatkan ID driver. Silakan coba lagi.');
+
+        return;
+      }
+    }
+
+    const payload = {
+      order_id: this.incomingOrder.id,
+      customer_id: this.incomingOrder.user.id,
+      driver_id: this.driverId, // pastikan disiapkan sebelumnya
+      distance: this.incomingOrder.distance_km,
+      duration: this.incomingOrder.duration_min,
+      total_price: this.incomingOrder.total_price,
+      metode: this.selectedMethod,
+    };
+
+    try {
+      await axios.post('http://localhost:8000/api/transactions', payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('✅ Transaksi berhasil disimpan!');
+      console.log('📦 Transaksi dikirim:', payload);
+
+      // opsional: resetTracking atau redirect ke halaman lain
+      this.resetTracking();
+
+    } catch (err) {
+      console.error('❌ Gagal simpan transaksi:', err);
+      alert('Gagal menyimpan transaksi. Silakan coba lagi.');
+      console.log('📤 Payload transaksi:', payload);
+      console.log('📤 Payload driver_id:', this.driverId);
+
+    }
+  }
+
+
+  resetTracking() {
+    this.stepStatus = null;
+    this.acceptedOrderId = null;
+    this.incomingOrder = null;
+
+    if (this.routeLine) this.map?.removeLayer(this.routeLine);
+    if (this.pickupMarker) this.map?.removeLayer(this.pickupMarker);
+    if (this.destinationMarker) this.map?.removeLayer(this.destinationMarker);
+  }
 
 
   async rejectOrder() {

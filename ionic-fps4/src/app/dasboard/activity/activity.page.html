@@ -10,13 +10,16 @@
   <ion-list lines="none" *ngIf="selectedTab==='riwayat'">
     <ion-item *ngFor="let item of riwayatList" class="transaction-item">
       <ion-thumbnail slot="start">
-        <img src="assets/Icon Motor hijau kuning 1.png" alt="transaction-img">
+        <img src="assets/Icon Motor hijau kuning 1.png" alt="transaction-img" />
       </ion-thumbnail>
       <ion-label>
-        <h2>{{item.universitas}}</h2>
-        <p>{{item.keterangan}}</p>
+        <h2>{{ item.start_address }} ➜ {{ item.dest_address }}</h2>
+        <p>Driver: {{ item.driver_name }}</p>
+        <p>Tanggal: {{ formatTanggal(item.created_at) }}</p>
       </ion-label>
-      <span class="transaction-amount">{{item.harga | currency:'IDR'}}</span>
+      <span class="transaction-amount">
+        {{ item.total_price | currency:'IDR':'symbol':'1.0-0' }}
+      </span>
     </ion-item>
   </ion-list>
 
@@ -24,13 +27,15 @@
   <ion-list lines="none" *ngIf="selectedTab==='dalamProses'">
     <ion-item *ngFor="let item of prosesList" class="transaction-item">
       <ion-thumbnail slot="start">
-        <img src="assets/Icon Motor hijau kuning 1.png" alt="transaction-img">
+        <img src="assets/Icon Motor hijau kuning 1.png" alt="transaction-img" />
       </ion-thumbnail>
       <ion-label>
-        <h2>{{item.universitas}}</h2>
-        <p>{{item.keterangan}}</p>
+        <h2>{{ item.start_address }} ➜ {{ item.dest_address }}</h2>
+        <p>Menunggu penyelesaian...</p>
       </ion-label>
-      <span class="transaction-amount">{{item.harga | currency:'IDR'}}</span>
+      <span class="transaction-amount">
+        {{ item.total_price | currency:'IDR':'symbol':'1.0-0' }}
+      </span>
     </ion-item>
   </ion-list>
 </ion-content>

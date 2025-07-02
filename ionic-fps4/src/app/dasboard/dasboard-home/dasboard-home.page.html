@@ -1,9 +1,9 @@
 <ion-content class="dashboard-content">
-
+<div class="header-bg"></div>
 
   <div class="profile-section">
     <div class="profile-image-wrapper">
-      <img [src]="user?.photo_url ? user.photo_url : 'assets/user-placeholder.png'" alt="Profile" class="profile-image" />
+     <img [src]="user?.foto_profil || 'assets/user-placeholder.png'" alt="Profile" class="profile-image" />
     </div>
 
     <h2 class="greeting">

@@ -12,6 +12,7 @@ class Driver extends Model
     protected $fillable = [
         'user_id',
         'foto_profil',
+        'foto_qris',
         'jenis_kelamin',
         'status',
         'rating',
@@ -22,4 +23,5 @@ class Driver extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
 }

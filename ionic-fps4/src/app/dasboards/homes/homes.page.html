@@ -12,10 +12,13 @@
 
 <ion-content class="ion-padding custom-background">
   <div class="profile-section" style="text-align: center;">
-    <img src="assets/Logo.png" alt="logo" />
-    <h2>Hallo Driver, {{ user?.name || 'Username' }}</h2>
-    <p>Siap Narik Nih??</p>
-  </div>
+  <ion-avatar style="margin: 0 auto 12px auto; width: 90px; height: 90px;">
+    <img [src]="user?.foto_profil || 'assets/user-placeholder.png'" alt="Foto Driver" />
+  </ion-avatar>
+  <h2>Hallo Driver, {{ user?.name || 'Username' }}</h2>
+  <p>Siap Narik Nih??</p>
+</div>
+
 
   <ion-button expand="block" shape="round" class="search-customer-button" (click)="goToLokasi()">
     Klik disini buat cari pelanggan

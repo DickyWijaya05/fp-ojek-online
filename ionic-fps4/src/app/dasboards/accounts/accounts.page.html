@@ -22,14 +22,9 @@
       <!-- Nama -->
       <ion-label class="form-label">Nama</ion-label>
       <ion-item class="input-item">
-        <ion-input
-          *ngIf="!isEditing"
-          [value]="profile.name"
-          readonly>
+        <ion-input *ngIf="!isEditing" [value]="profile.name" readonly>
         </ion-input>
-        <ion-input
-          *ngIf="isEditing"
-          [(ngModel)]="profile.name">
+        <ion-input *ngIf="isEditing" [(ngModel)]="profile.name">
         </ion-input>
       </ion-item>
 
@@ -44,18 +39,13 @@
       <ion-label class="form-label">Phone Number</ion-label>
       <ion-item class="input-item phone-input">
         <ion-avatar slot="start" class="small-flag">
-          <img src="assets/id.png" alt="id" class="id"/>
+          <img src="assets/id.png" alt="id" class="id" />
         </ion-avatar>
         <ion-icon name="chevron-down-outline" slot="start" class="chevron-icon"></ion-icon>
 
-        <ion-input
-          *ngIf="!isEditing"
-          [value]="profile.phone"
-          readonly>
+        <ion-input *ngIf="!isEditing" [value]="profile.phone" readonly>
         </ion-input>
-        <ion-input
-          *ngIf="isEditing"
-          [(ngModel)]="profile.phone">
+        <ion-input *ngIf="isEditing" [(ngModel)]="profile.phone">
         </ion-input>
       </ion-item>
 
@@ -74,18 +64,29 @@
       <!-- Date of Birth -->
       <ion-label class="form-label">Date of Birth</ion-label>
       <ion-item class="input-item">
-        <ion-input
-          *ngIf="!isEditing"
-          [value]="profile.date_of_birth"
-          readonly>
+        <ion-input *ngIf="!isEditing" [value]="profile.date_of_birth" readonly>
         </ion-input>
-        <ion-input
-          *ngIf="isEditing"
-          [(ngModel)]="profile.date_of_birth"
-          type="date">
+        <ion-input *ngIf="isEditing" [(ngModel)]="profile.date_of_birth" type="date">
         </ion-input>
         <ion-icon name="calendar-outline" slot="end"></ion-icon>
       </ion-item>
+
+
+      <!-- Foto QRIS -->
+      <div class="qris-section">
+        <ion-label class="form-label">QRIS (Pembayaran)</ion-label>
+        <div class="qris-image-wrapper">
+          <!-- <img [src]="profile.foto_qris || 'assets/qris-placeholder.png'" alt="qris" class="qris-image" /> -->
+          <img *ngIf="profile.foto_qris" [src]="profile.foto_qris" alt="QRIS" class="qris-image" />
+
+          <ion-button fill="solid" size="small" (click)="triggerQrisInput()">
+            <ion-icon slot="start" name="camera-outline"></ion-icon>
+            Upload QRIS
+          </ion-button>
+          <input type="file" #qrisInput hidden (change)="uploadQris($event)" />
+        </div>
+      </div>
+
 
     </div>
 

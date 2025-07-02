@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Driver;
 
 class AdminController extends Controller
 {
@@ -19,9 +20,49 @@ class AdminController extends Controller
 
     // Tampilkan dashboard
     public function dashboard()
-    {
-        return view('admin.dashboard');
+{
+    $totalUsers = User::count();
+    $totalDrivers = User::where('level_id', 2)->count();
+
+    // Ambil aktivitas login/logout selama 7 hari terakhir
+    $startDate = now()->subDays(6)->startOfDay(); // Hari ke-7 ke belakang
+    $endDate = now()->endOfDay();
+
+    $logs = \App\Models\ActivityLog::where('level_id', 2)
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->selectRaw('DATE(created_at) as tanggal,
+                     SUM(activity = "Login") as login,
+                     SUM(activity = "Logout") as logout')
+        ->groupByRaw('DATE(created_at)')
+        ->orderByRaw('DATE(created_at)')
+        ->get();
+
+    // Format label dan data untuk chart
+    $labels = [];
+    $logins = [];
+    $logouts = [];
+
+    for ($i = 6; $i >= 0; $i--) {
+        $tanggal = now()->subDays($i)->format('Y-m-d');
+        $label = \Carbon\Carbon::parse($tanggal)->translatedFormat('D');
+
+        $data = $logs->firstWhere('tanggal', $tanggal);
+
+        $labels[] = $label;
+        $logins[] = $data ? (int) $data->login : 0;
+        $logouts[] = $data ? (int) $data->logout : 0;
     }
+
+    return view('admin.dashboard', compact(
+        'totalUsers',
+        'totalDrivers',
+        'labels',
+        'logins',
+        'logouts'
+    ));
+}
+
+
 
     // Halaman edit profile (opsional)
     public function editProfile()
@@ -85,7 +126,7 @@ class AdminController extends Controller
     public function users()
     {
         $users = User::all();
-        return view('admin.users', compact('users'));
+        return view('admin.users.users', compact('users'));
     }
 
     public function verify($id)
@@ -134,10 +175,15 @@ class AdminController extends Controller
         return view('admin.drivers');
     }
 
-    public function statusDriver()
-    {
-        return view('admin.status-driver');
-    }
+   public function statusDriver()
+{
+    $drivers = Driver::with('user')
+        ->select('id', 'user_id', 'foto_profil', 'status', 'rating')
+        ->get();
+
+    return view('admin.status-driver', compact('drivers'));
+}
+
 
     public function tarif()
     {

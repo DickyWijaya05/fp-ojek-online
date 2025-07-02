@@ -77,79 +77,85 @@ public function registerDriver(Request $request)
 
 
     // ✅ LOGIN MANUAL CUSTOMER
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+ public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'required|string|email',
+        'password' => 'required|string',
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-
-// ⛔ Cegah login manual jika password kosong (akun dari Google)
+    // ⛔ Cegah login manual jika password kosong (akun dari Google)
     if (empty($user->password)) {
         return response()->json([
             'message' => 'Akun ini terdaftar menggunakan Google. Silakan login dengan Google.'
         ], 403);
     }
 
-        // Email tidak ditemukan
-        if (!$user) {
-            return response()->json(['message' => 'Email belum terdaftar.'], 404);
-        }
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Email atau password salah'], 401);
-        }
-
-        // Akun belum lengkap
-        if ($user->level_id == 1) {
-             response()->json(['message' => 'Akun belum lengkap. Silakan daftar terlebih dahulu.'], 403);
+    if (!$user) {
+        return response()->json(['message' => 'Email belum terdaftar.'], 404);
     }
 
+    if (!Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Email atau password salah'], 401);
+    }
 
-        // Level tidak valid
-        if (!in_array($user->level_id, [2, 3])){
-            return response()->json(['message' => 'Level pengguna tidak valid.'], 403);
+    // Akun belum lengkap
+    if ($user->level_id == 1) {
+        return response()->json(['message' => 'Akun belum lengkap. Silakan daftar terlebih dahulu.'], 403);
+    }
+
+    // Level tidak valid
+    if (!in_array($user->level_id, [2, 3])) {
+        return response()->json(['message' => 'Level pengguna tidak valid.'], 403);
     }
 
     // Jika customer (level_id = 3), buat entri ke tabel customers jika belum ada
-if ($user->level_id == 3) {
-    $isCustomerExist = \App\Models\Customer::where('user_id', $user->id)->exists();
-    
-    if (!$isCustomerExist) {
-        \App\Models\Customer::create([
-            'user_id' => $user->id,
-            'foto_profil' => $user->photo_url,
-            'alamat' => null,
-            'jenis_kelamin' => null,
-            'rating' => 0.00
-        ]);
+    if ($user->level_id == 3) {
+        $isCustomerExist = Customer::where('user_id', $user->id)->exists();
+        if (!$isCustomerExist) {
+            Customer::create([
+                'user_id' => $user->id,
+                'foto_profil' => $user->photo_url,
+                'alamat' => null,
+                'jenis_kelamin' => null,
+                'rating' => 0.00
+            ]);
+        }
     }
-}
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+    $token = $user->createToken('auth-token')->plainTextToken;
 
-        // ✅ Tambahkan ke tabel drivers jika level_id == 2 (driver) dan belum ada
-        if ($user->level_id == 2) {
-            $exists = Driver::where('user_id', $user->id)->exists();
-            if (!$exists) {
-                Driver::create([
-                    'user_id' => $user->id,
-                    'foto_profil' => $user->photo_url,
-                    'alamat' => null,
-                    'status' => 'offline',
-                    'rating' => 0.0,
-                ]);
-            }
+    // ✅ Tambahkan ke tabel drivers jika level_id == 2 (driver) dan belum ada
+    if ($user->level_id == 2) {
+        $exists = Driver::where('user_id', $user->id)->exists();
+        if (!$exists) {
+            Driver::create([
+                'user_id' => $user->id,
+                'foto_profil' => $user->photo_url,
+                'alamat' => null,
+                'status' => 'offline',
+                'rating' => 0.0,
+            ]);
         }
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
+        // ✅ Simpan log aktivitas login driver
+        \App\Models\ActivityLog::create([
+            'user_id' => $user->id,
+            'level_id' => $user->level_id,
+            'activity' => 'Login',
+            'ip_address' => request()->ip(),
+            'device' => request()->userAgent(),
         ]);
     }
+
+    return response()->json([
+        'user' => $user,
+        'token' => $token,
+    ]);
+}
+
 
     // ✅ DARI FIREBASE (Google/OTP)
     public function storeUser(Request $request)

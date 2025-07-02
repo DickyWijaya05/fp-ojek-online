@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   standalone: false,
@@ -11,28 +11,28 @@ import { AuthService } from '../../services/auth.service';
 export class DasboardHomePage implements OnInit {
   user: any = null;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit() {
-  this.authService.user.subscribe((firebaseUser: any) => {
-    if (firebaseUser?.email) {
-      // Ambil data lengkap dari Laravel
-      this.authService.getUserFromLaravel(firebaseUser.email).subscribe(
-        (res) => {
-          this.user = res.user;
-          localStorage.setItem('user', JSON.stringify(res.user)); // simpan untuk reload
-        },
-        (err) => {
-          console.error('Gagal ambil user dari Laravel:', err);
-        }
-      );
-    } else {
-      // fallback dari localStorage
-      const localUser = localStorage.getItem('user');
-      this.user = localUser ? JSON.parse(localUser) : null;
-    }
-  });
-}
+    this.loadUserFromApi();
+  }
+
+  loadUserFromApi() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    this.http.get('http://localhost:8000/api/profile', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (res: any) => {
+        this.user = res;
+        localStorage.setItem('user', JSON.stringify(res));
+      },
+      error: (err) => {
+        console.error('Gagal ambil profil:', err);
+      }
+    });
+  }
 
   goToLokasi() {
     this.router.navigate(['/user-tracking']);

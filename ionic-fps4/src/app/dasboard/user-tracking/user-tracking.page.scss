@@ -1,11 +1,52 @@
-// #map-container {
-//   height: 100%;
-//   width: 100%;
-//   position: relative;
-// }
+.page-modern {
+  --ion-background-color: #fffaf3;
+}
+
+#map-container {
+  position: relative;
+  height: 100%;
+}
 
 #map {
-  height: 80vh; // Atau coba 400px untuk percobaan
+  height: 100%;
   width: 100%;
-  border: 1px solid #ccc;
+  z-index: 1;
+}
+
+.overlay-wrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 999;
+  padding: 16px;
+}
+
+.card-modern {
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-modern h2,
+.card-modern ion-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-modern ion-card-content p {
+  margin-bottom: 10px;
+}
+
+.form-wrapper {
+  background: #ffde59;
+  color: #333;
+}
+
+.input-modern ion-input {
+  font-size: 14px;
+}
+
+.completed-card {
+  border: 2px solid #00c853;
 }

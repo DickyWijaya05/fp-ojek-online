@@ -4,6 +4,8 @@ import { Geolocation } from '@capacitor/geolocation';
 import axios from 'axios';
 import { OrderService } from '../../services/order.service'; // sesuaikan path
 import { ToastController } from '@ionic/angular'; // agar alert modern
+import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -33,9 +35,11 @@ export class UserTrackingPage {
   driverTrackingInterval: any;
   pickupSoundPlayed = false;
   incomingOrder: any = null;
+  completedOrder: any = null;
   hasDrawnToDestination = false;
 
-  constructor(private orderService: OrderService, private toastCtrl: ToastController) { }
+
+  constructor(private orderService: OrderService, private toastCtrl: ToastController, private router: Router) { }
 
   async ionViewDidEnter() {
     const position = await Geolocation.getCurrentPosition();
@@ -365,10 +369,16 @@ export class UserTrackingPage {
           case 'completed':
             this.driverStatus = 'completed';
             this.orderStatus = 'completed';
+            this.completedOrder = order;
             this.showToast('🎉 Perjalanan selesai. Terima kasih!');
             clearInterval(this.driverTrackingInterval);
             clearInterval(this.orderPollingInterval);
+
+           this.completedOrder = order;
+
             break;
+
+
         }
       } catch (error) {
         console.error('❌ Gagal polling status order:', error);
@@ -500,4 +510,45 @@ export class UserTrackingPage {
       }
     }
   }
+  resetTracking() {
+    this.orderId = null;
+    this.driverStatus = 'idle';
+    this.orderStatus = null;
+    this.hasDrawnToDestination = false;
+    this.pickupSoundPlayed = false;
+    this.selectedDriver = null;
+    this.incomingOrder = null;
+    this.completedOrder = null;
+
+    if (this.routeLine) {
+      this.map?.removeLayer(this.routeLine);
+      this.routeLine = null;
+    }
+    if (this.driverMarker) {
+      this.map?.removeLayer(this.driverMarker);
+      this.driverMarker = undefined;
+    }
+    if (this.destinationMarker) {
+      this.map?.removeLayer(this.destinationMarker);
+      this.destinationMarker = null;
+    }
+    if (this.startMarker) {
+      this.map?.removeLayer(this.startMarker);
+      this.startMarker = undefined;
+    }
+    if (this.destMarker) {
+      this.map?.removeLayer(this.destMarker);
+      this.destMarker = undefined;
+    }
+
+    clearInterval(this.driverTrackingInterval);
+    clearInterval(this.orderPollingInterval);
+
+    this.startQuery = '';
+    this.destQuery = '';
+    this.startCoords = null;
+    this.destCoords = null;
+  }
+
+
 }

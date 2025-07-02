@@ -3,40 +3,45 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\ActivityLog;
+use Carbon\Carbon;
 
 class LaporanAktivitasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Dummy data aktivitas
-        $aktivitas = [
-            [
-                'waktu' => '2025-06-23 08:32:11',
-                'nama' => 'Budi',
-                'jenis' => 'Login',
-                'ip' => '192.168.1.10',
-                'device' => 'Chrome (Windows)'
-            ],
-            [
-                'waktu' => '2025-06-23 10:12:45',
-                'nama' => 'Dedi',
-                'jenis' => 'Logout',
-                'ip' => '192.168.1.11',
-                'device' => 'Firefox (Linux)'
-            ],
-            [
-                'waktu' => '2025-06-23 11:20:03',
-                'nama' => 'Bayu',
-                'jenis' => 'Login',
-                'ip' => '192.168.1.12',
-                'device' => 'Safari (MacOS)'
-            ]
-        ];
+        $filter = $request->filter;
+        $query = ActivityLog::with('user')
+            ->where('level_id', 2); // hanya driver
 
-        // Statistik dummy
-        $totalAktivitas = count($aktivitas);
-        $loginDriver = collect($aktivitas)->where('jenis', 'Login')->count();
-        $logoutDriver = collect($aktivitas)->where('jenis', 'Logout')->count();
+        // Filter waktu
+        if ($filter == 'hari') {
+            $query->whereDate('created_at', today());
+        } elseif ($filter == 'minggu') {
+            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+        } elseif ($filter == 'bulan') {
+            $query->whereMonth('created_at', now()->month);
+        }
+
+        $logs = $query->latest()->get();
+
+        // Data untuk tabel
+        $aktivitas = $logs->map(function ($log) {
+            return [
+                'waktu' => $log->created_at->format('d M Y H:i'),
+                'nama' => optional($log->user)->name ?? 'Tidak diketahui',
+                'jenis' => $log->activity,
+                'ip' => $log->ip_address ?? '-',
+                'device' => $log->device ?? '-',
+            ];
+        });
+
+        // Statistik dashboard
+        $todayLogs = ActivityLog::whereDate('created_at', today())->where('level_id', 2);
+        $totalAktivitas = $todayLogs->count();
+        $loginDriver = $todayLogs->where('activity', 'Login')->count();
+        $logoutDriver = $todayLogs->where('activity', 'Logout')->count();
 
         return view('admin.laporan_aktivitas.index', compact(
             'aktivitas',

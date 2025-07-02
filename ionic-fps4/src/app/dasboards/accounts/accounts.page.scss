@@ -100,6 +100,26 @@
   margin-left: 6px;
 }
 
+.qris-section {
+  margin-top: 20px;
+  text-align: center;
+
+  .qris-image-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .qris-image {
+    width: 200px;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+  }
+}
+
+
 
 /* ========== DARK MODE SUPPORT (HANYA TEKS & IKON) ========== */
 @media (prefers-color-scheme: dark) {

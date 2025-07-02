@@ -53,79 +53,80 @@ const routes: Routes = [
   },
   {
     path: 'cancel-ride',
-    loadChildren: () => import('./cancel-ride/cancel-ride.module').then( m => m.CancelRidePageModule)
+    loadChildren: () => import('./cancel-ride/cancel-ride.module').then(m => m.CancelRidePageModule)
   },
   {
     path: 'confirm-rating',
-    loadChildren: () => import('./confirm-rating/confirm-rating.module').then( m => m.ConfirmRatingPageModule)
+    loadChildren: () => import('./confirm-rating/confirm-rating.module').then(m => m.ConfirmRatingPageModule)
   },
   {
     path: 'form-register',
-    loadChildren: () => import('./form-register/form-register.module').then( m => m.FormRegisterPageModule)
+    loadChildren: () => import('./form-register/form-register.module').then(m => m.FormRegisterPageModule)
   },
   {
     path: 'canceled',
-    loadChildren: () => import('./canceled/canceled.module').then( m => m.CanceledPageModule)
+    loadChildren: () => import('./canceled/canceled.module').then(m => m.CanceledPageModule)
   },
   {
     path: 'register-option',
-    loadChildren: () => import('./register-option/register-option.module').then( m => m.RegisterOptionPageModule)
+    loadChildren: () => import('./register-option/register-option.module').then(m => m.RegisterOptionPageModule)
   },
   {
     path: 'registers',
-    loadChildren: () => import('./registers/registers.module').then( m => m.RegistersPageModule)
+    loadChildren: () => import('./registers/registers.module').then(m => m.RegistersPageModule)
   },
   {
     path: 'document-driver',
-    loadChildren: () => import('./document-driver/document-driver.module').then( m => m.DocumentDriverPageModule)
+    loadChildren: () => import('./document-driver/document-driver.module').then(m => m.DocumentDriverPageModule)
   },
   {
     path: 'dasboards',
-    loadChildren: () => import('./dasboards/dasboards.module').then( m => m.DasboardsPageModule)
+    loadChildren: () => import('./dasboards/dasboards.module').then(m => m.DasboardsPageModule)
   },
   {
 
     path: 'accounts',
-    loadChildren: () => import('./dasboards/accounts/accounts.module').then( m => m.AccountsPageModule)
+    loadChildren: () => import('./dasboards/accounts/accounts.module').then(m => m.AccountsPageModule)
   },
   {
     path: 'chats',
-    loadChildren: () => import('./dasboards/chats/chats.module').then( m => m.ChatsPageModule)
+    loadChildren: () => import('./dasboards/chats/chats.module').then(m => m.ChatsPageModule)
   },
   {
     path: 'homes',
-    loadChildren: () => import('./dasboards/homes/homes.module').then( m => m.HomesPageModule)
+    loadChildren: () => import('./dasboards/homes/homes.module').then(m => m.HomesPageModule)
   },
   {
     path: 'activitys',
-    loadChildren: () => import('./dasboards/activitys/activitys.module').then( m => m.ActivitysPageModule)
+    loadChildren: () => import('./dasboards/activitys/activitys.module').then(m => m.ActivitysPageModule)
   },
   {
     path: 'login-costumer',
-    loadChildren: () => import('./login-costumer/login-costumer.module').then( m => m.LoginCostumerPageModule)
+    loadChildren: () => import('./login-costumer/login-costumer.module').then(m => m.LoginCostumerPageModule)
   },
   {
     path: 'driver-tracking',
-    loadChildren: () => import('./dasboards/driver-tracking/driver-tracking.module').then( m => m.DriverTrackingPageModule)
+    loadChildren: () => import('./dasboards/driver-tracking/driver-tracking.module').then(m => m.DriverTrackingPageModule)
   },
   {
     path: 'user-tracking',
-    loadChildren: () => import('./dasboard/user-tracking/user-tracking.module').then( m => m.UserTrackingPageModule)
+    loadChildren: () => import('./dasboard/user-tracking/user-tracking.module').then(m => m.UserTrackingPageModule)
   },
   {
     path: 'landing-page-login',
-    loadChildren: () => import('./landing-page-login/landing-page-login.module').then( m => m.LandingPageLoginPageModule)
+    loadChildren: () => import('./landing-page-login/landing-page-login.module').then(m => m.LandingPageLoginPageModule)
   },
   {
     path: 'login-option',
-    loadChildren: () => import('./login-option/login-option.module').then( m => m.LoginOptionPageModule)
-  },  {
-    path: 'payment',
-    loadChildren: () => import('./payment/payment.module').then( m => m.PaymentPageModule)
+    loadChildren: () => import('./login-option/login-option.module').then(m => m.LoginOptionPageModule)
+  },
+  {
+    path: 'payment/:id',
+    loadChildren: () => import('./payment/payment.module').then(m => m.PaymentPageModule)
   },
   {
     path: 'rating',
-    loadChildren: () => import('./rating/rating.module').then( m => m.RatingPageModule)
+    loadChildren: () => import('./rating/rating.module').then(m => m.RatingPageModule)
   }
 
 ];

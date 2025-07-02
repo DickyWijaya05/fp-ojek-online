@@ -1,11 +1,11 @@
-<!-- Map-nya hanya satu, tetap render di semua kondisi -->
+<!-- Map-nya tetap satu -->
 <div id="map" style="height: 100vh; width: 100%; z-index: 1;"></div>
 
-<!-- UI Order dinamis berdasarkan stepStatus -->
+<!-- UI dinamis -->
 <ng-container [ngSwitch]="stepStatus">
-
+  <!-- 🚨 Order Masuk -->
   <ng-container *ngSwitchCase="null">
-    <ion-card *ngIf="incomingOrder">
+    <ion-card class="card-modern" *ngIf="incomingOrder">
       <ion-card-header>
         <ion-card-title>📦 Order Masuk</ion-card-title>
       </ion-card-header>
@@ -17,58 +17,81 @@
         <p><strong>Durasi:</strong> {{ incomingOrder.duration_min?.toFixed(1) }} menit</p>
         <p><strong>Tarif:</strong> Rp {{ incomingOrder.total_price?.toLocaleString() }}</p>
 
-        <ion-button expand="block" color="success" (click)="acceptOrder()">Terima Order</ion-button>
-        <ion-button expand="block" color="danger" (click)="rejectOrder()">Tolak Order</ion-button>
+        <ion-button expand="block" color="success" shape="round" (click)="acceptOrder()">Terima Order</ion-button>
+        <ion-button expand="block" color="danger" shape="round" fill="outline" (click)="rejectOrder()">Tolak Order</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>
 
+  <!-- 🏁 Menuju Jemput -->
   <ng-container *ngSwitchCase="'accepted'">
-    <ion-card>
+    <ion-card class="card-modern">
       <ion-card-header>
-        <ion-card-title>📍 Menuju titik jemput</ion-card-title>
+        <ion-card-title>📍 Menuju Titik Jemput</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p>Tujuan: {{ incomingOrder?.start_address }}</p>
-        <ion-button expand="block" color="primary" (click)="sudahSampaiJemput()">Sudah Sampai Titik Jemput</ion-button>
+        <ion-button expand="block" color="primary" shape="round" (click)="sudahSampaiJemput()">Sudah Sampai</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>
 
+  <!-- ✅ Sudah Jemput -->
   <ng-container *ngSwitchCase="'pickupReached'">
-    <ion-card>
+    <ion-card class="card-modern">
       <ion-card-header>
         <ion-card-title>✅ Sudah Jemput</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p>Selanjutnya antar ke: {{ incomingOrder?.dest_address }}</p>
-        <ion-button expand="block" color="primary" (click)="proceedToDestination()">Lanjut ke tujuan</ion-button>
+        <ion-button expand="block" color="primary" shape="round" (click)="proceedToDestination()">Lanjut ke Tujuan</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>
 
+  <!-- 🚗 Menuju Tujuan -->
   <ng-container *ngSwitchCase="'toDestination'">
-    <ion-card>
+    <ion-card class="card-modern">
       <ion-card-header>
         <ion-card-title>🏁 Menuju Tujuan</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p>Destinasi: {{ incomingOrder?.dest_address }}</p>
-        <ion-button expand="block" color="success" (click)="completeTrip()">Selesai</ion-button>
+        <ion-button expand="block" color="success" shape="round" (click)="completeTrip()">Selesai</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>
 
- <ng-container *ngSwitchCase="'completed'">
-  <div class="payment-confirmation">
+ <!-- 🎉 Perjalanan Selesai -->
+<ng-container *ngSwitchCase="'completed'">
+  <div class="payment-confirmation card-modern">
     <div class="banner-content">
       <img src="assets/paid.png" alt="Pembayaran" class="banner-icon" />
       <h2>🎉 Perjalanan Selesai</h2>
       <p>Notifikasi telah dikirim ke penumpang untuk melakukan pembayaran.</p>
-      <ion-button expand="block" color="primary" (click)="resetTracking()">Kembali ke Beranda</ion-button>
+      <ion-card class="card-modern">
+  <ion-card-header>
+    <ion-card-title>💳 Pilih Metode Pembayaran</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item lines="none">
+      <ion-label>Metode:</ion-label>
+      <ion-select placeholder="Pilih..." [(ngModel)]="selectedMethod">
+        <ion-select-option value="tunai">Tunai</ion-select-option>
+        <ion-select-option value="qris">QRIS</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-card-content>
+</ion-card>      
+      <!-- Tambahkan tombol ini -->
+      <ion-button expand="block" color="success" shape="round" (click)="konfirmasiPembayaran()">
+        Konfirmasi Pembayaran
+      </ion-button>
+
+      <ion-button expand="block" color="medium" shape="round" (click)="resetTracking()">
+        Reset
+      </ion-button>
     </div>
   </div>
 </ng-container>
 
-
-</ng-container>

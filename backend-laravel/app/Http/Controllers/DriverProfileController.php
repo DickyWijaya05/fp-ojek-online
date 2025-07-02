@@ -26,10 +26,13 @@ class DriverProfileController extends Controller
             ]);
 
             return response()->json([
+                'id' => $driver->id, // ⬅️ WAJIB ditambahkan
+                'user_id' => $driver->user_id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'foto_profil' => $driver->foto_profil ? asset('storage/profiles/' . $driver->foto_profil) : null,
+                'foto_qris' => $driver->foto_qris ? asset('storage/qris/' . $driver->foto_qris) : null,
                 'gender' => $driver->jenis_kelamin === 'L' ? 'Male' : ($driver->jenis_kelamin === 'P' ? 'Female' : null),
                 'status' => $driver->status,
                 'rating' => $driver->rating,
@@ -106,4 +109,45 @@ class DriverProfileController extends Controller
             return response()->json(['message' => 'Failed to upload photo'], 500);
         }
     }
+
+    public function uploadQris(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user || $user->level_id != 2) {
+                return response()->json(['error' => 'Unauthorized or not a driver'], 403);
+            }
+
+            $driver = $user->driver ?? $user->driver()->create([
+                'user_id' => $user->id,
+                'status' => 'aktif',
+                'rating' => 0
+            ]);
+
+            $request->validate([
+                'foto_qris' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            // 🔥 Hapus foto lama kalau ada
+            if ($driver->foto_qris && \Storage::exists('public/qris/' . $driver->foto_qris)) {
+                \Storage::delete('public/qris/' . $driver->foto_qris);
+            }
+
+            // 💾 Simpan foto baru
+            $path = $request->file('foto_qris')->store('public/qris');
+            $filename = basename($path);
+
+            $driver->foto_qris = $filename;
+            $driver->save();
+
+            return response()->json([
+                'foto_qris' => asset('storage/qris/' . $filename)
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Upload driver QRIS error: ' . $e->getMessage());
+            return response()->json(['message' => 'Failed to upload QRIS'], 500);
+        }
+    }
+
 }

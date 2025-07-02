@@ -26,4 +26,11 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'driver_id');
     }
+
+    // Relasi ke tabel drivers (driver profile: tempat QRIS disimpan)
+public function driverProfile()
+{
+    return $this->belongsTo(\App\Models\Driver::class, 'driver_id', 'user_id');
+}
+
 }

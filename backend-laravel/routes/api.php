@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
-
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApiAuthController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\DriverLocationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\Api\OrderPollingController;
+use App\Http\Controllers\TransactionController;
 
 // Rute publik
 Route::post('/register', [ApiAuthController::class, 'register']);
@@ -23,11 +23,10 @@ Route::post('/login', [ApiAuthController::class, 'login']);
 Route::post('/store-user', [ApiAuthController::class, 'storeUser']);
 Route::post('/get-user', [ApiAuthController::class, 'getUser']);
 
-
+//route gps
 Route::get('/search-location', function () {
     $query = request('q');
     $country = request('country') ?? 'ID';
-
     $response = Http::withHeaders([
         'User-Agent' => 'GoCabsApp/1.0 (dickiajiwijaya@.com)'
     ])->get('https://nominatim.openstreetmap.org/search', [
@@ -44,14 +43,15 @@ Route::post('/route', [RouteController::class, 'getRoute']);
 // Route umum (dengan autentikasi)
 Route::middleware('auth:sanctum')->get('/user', fn(Request $request) => $request->user());
 // Cek status order berdasarkan ID (untuk customer dan driver)
-    Route::middleware('auth:sanctum')->get('/order/{id}', [OrderController::class, 'show']);
+Route::middleware('auth:sanctum')->get('/order/{id}', [OrderController::class, 'show']);
+Route::middleware('auth:sanctum')->get('/order/{id}/driver-qris', [OrderController::class, 'getDriverQris']);
 Route::middleware('auth:sanctum')->post('/customer-location', [CustomerLocationController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/nearest-driver', [DriverLocationController::class, 'findNearestDriver']);
 Route::middleware(['auth:sanctum'])->get('/driver/{id}/location', [DriverLocationController::class, 'getLocation']);
 Route::middleware('auth:sanctum')->get('/driver/route-to-destination/{id}', [OrderController::class, 'routeToDestination']);
 Route::middleware('auth:sanctum')->post('/driver/order-status/{id}', [OrderController::class, 'updateStatus']);
 
-  
+
 
 
 // ===============================
@@ -78,7 +78,10 @@ Route::middleware(['auth:sanctum', 'is_customer'])->group(function () {
     Route::get('/customer/profile', fn(Request $request) => response()->json(['user' => $request->user()]));
     Route::post('/order', [OrderController::class, 'store']);
     Route::post('/customer/order-status/{id}', [OrderController::class, 'customerUpdateStatus']);
+    Route::get('/customer/transactions', [OrderController::class, 'customerTransactionHistory']);
+    Route::put('/order/{id}/set-payment-method', [OrderController::class, 'setPaymentMethod']);    
 });
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
@@ -88,7 +91,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 // ===============================
-// === Group Driver Only =========
+// === Group Driver Only ========= 
 // ===============================
 Route::middleware(['auth:sanctum', 'is_driver'])->group(function () {
 
@@ -102,10 +105,6 @@ Route::middleware(['auth:sanctum', 'is_driver'])->group(function () {
     Route::post('/driver/accept-order/{id}', [OrderController::class, 'acceptOrder']);
     Route::post('/driver/reject-order/{id}', [OrderController::class, 'rejectOrder']);
     Route::get('/driver/incoming-order', [OrderController::class, 'incomingOrder']);
-    
-
-
-
 
     // Upload dokumen
     Route::post('/driver/documents', [DriverDocumentController::class, 'upload']);
@@ -114,7 +113,10 @@ Route::middleware(['auth:sanctum', 'is_driver'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/driver/profile', [DriverProfileController::class, 'profile']);
     Route::put('/driver/profile', [DriverProfileController::class, 'updateProfile']);
-    Route::post('/driver/profile/upload-photo', [DriverProfileController::class, 'uploadPhoto']);
+    Route::post('/driver/profile/upload-qris', [DriverProfileController::class, 'uploadQris']);
 });
 
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::get('/transactions', [TransactionController::class, 'index']); // opsional
+});

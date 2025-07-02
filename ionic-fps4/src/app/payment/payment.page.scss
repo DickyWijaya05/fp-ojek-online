@@ -16,6 +16,27 @@
     color: #000;
 }
 
+.alert-custom {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.elegant-alert .alert-wrapper {
+  border-radius: 16px;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.alert-button-confirm {
+  color: #ffffff;
+  background-color: #4CAF50;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+
 .content-bg {
     background-color: #ffde59;
 

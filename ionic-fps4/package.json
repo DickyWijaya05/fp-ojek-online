@@ -34,6 +34,7 @@
     "@ionic/storage-angular": "^4.0.0",
     "axios": "^1.10.0",
     "cordova-plugin-firebasex": "^18.0.7",
+    "date-fns": "^2.29.3",
     "firebase": "^11.9.0",
     "ionicons": "^7.0.0",
     "leaflet": "^1.9.4",

@@ -4,93 +4,37 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
+use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Driver;
 
 class LaporanTransaksiController extends Controller
 {
     public function index()
     {
-        // Data dummy
-        $laporan = [
-            [
-                'id' => 'TRX001',
-                'pelanggan' => 'Andi',
-                'driver' => 'Budi',
-                'tanggal' => '2025-06-22 10:30',
-                'jarak' => 5.4,
-                'tarif' => 15000,
-                'metode' => 'QRIS',
-                'status' => 'Lunas'
-            ],
-            [
-                'id' => 'TRX002',
-                'pelanggan' => 'Sari',
-                'driver' => 'Dedi',
-                'tanggal' => '2025-06-22 11:15',
-                'jarak' => 3.1,
-                'tarif' => 12000,
-                'metode' => 'Tunai',
-                'status' => 'Belum'
-            ],
-            [
-                'id' => 'TRX003',
-                'pelanggan' => 'Rina',
-                'driver' => 'Bayu',
-                'tanggal' => '2025-06-21 15:45',
-                'jarak' => 8.9,
-                'tarif' => 25000,
-                'metode' => 'Transfer',
-                'status' => 'Lunas'
-            ]
-        ];
+        // Ambil semua transaksi dengan relasi customer dan driver
+        $transaksi = Transaction::with(['customer', 'driver'])->latest()->get();
 
-        // Statistik Dummy
-        $totalTransaksi = count($laporan);
-        $totalPenghasilan = array_sum(array_column($laporan, 'tarif'));
+        // Mapping data laporan
+        $laporan = $transaksi->map(function ($trx) {
+            return [
+                'id' => $trx->id,
+                'pelanggan' => optional($trx->customer)->name ?? '-',  // ✅ Perbaikan di sini
+                'driver' => optional($trx->driver)->name ?? '-',        // ✅ Perbaikan di sini
+                'tanggal' => $trx->created_at->format('d M Y H:i'),
+                'jarak' => $trx->distance ?? 0,
+                'tarif' => $trx->total_price ?? 0,
+                'metode' => 'Cash', // Ganti jika punya kolom metode pembayaran
+                'status' => 'Lunas', // Ganti jika punya kolom status pembayaran
+            ];
+        });
 
-        return view('admin.laporan_transaksi.index', compact('laporan', 'totalTransaksi', 'totalPenghasilan'));
-    }
+        // Hitung total transaksi dan penghasilan
+        $totalTransaksi = $laporan->count();
+        $totalPenghasilan = $laporan->sum('tarif');
 
-    public function cetakPDF()
-    {
-        // Data dummy yang sama
-        $laporan = [
-            [
-                'id' => 'TRX001',
-                'pelanggan' => 'Andi',
-                'driver' => 'Budi',
-                'tanggal' => '2025-06-22 10:30',
-                'jarak' => 5.4,
-                'tarif' => 15000,
-                'metode' => 'QRIS',
-                'status' => 'Lunas'
-            ],
-            [
-                'id' => 'TRX002',
-                'pelanggan' => 'Sari',
-                'driver' => 'Dedi',
-                'tanggal' => '2025-06-22 11:15',
-                'jarak' => 3.1,
-                'tarif' => 12000,
-                'metode' => 'Tunai',
-                'status' => 'Belum'
-            ],
-            [
-                'id' => 'TRX003',
-                'pelanggan' => 'Rina',
-                'driver' => 'Bayu',
-                'tanggal' => '2025-06-21 15:45',
-                'jarak' => 8.9,
-                'tarif' => 25000,
-                'metode' => 'Transfer',
-                'status' => 'Lunas'
-            ]
-        ];
-
-        $pdf = Pdf::loadView('admin.laporan_transaksi.laporan-transaksi-pdf', compact('laporan'))
-                  ->setPaper('a4', 'landscape');
-
-        return $pdf->stream('laporan_transaksi_' . Carbon::now()->format('d-m-Y_H-i') . '.pdf');
+        // Kirim ke view
+       return view('admin.laporan_transaksi.index', compact('laporan', 'totalTransaksi', 'totalPenghasilan'));
     }
 }

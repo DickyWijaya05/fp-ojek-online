@@ -58,6 +58,7 @@ class DriverController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $driver->id,
             'phone' => 'required|string|max:20',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         $driver->update([
