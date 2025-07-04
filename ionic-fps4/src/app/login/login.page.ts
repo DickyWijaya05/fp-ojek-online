@@ -38,14 +38,6 @@ export class LoginPage {
   alert('Level pengguna tidak dikenali.');
 }
 
-        // Arahkan ke dashboard berdasarkan level_id
-        if (user.level_id === 2) {
-          this.router.navigateByUrl('/dasboards'); // untuk driver
-        } else if (user.level_id === 3) {
-          this.router.navigateByUrl('/dasboard'); // untuk penumpang
-        } else {
-          alert('Level pengguna tidak dikenali.');
-        }
       },
       error: (err) => {
         console.error('Login gagal:', err);

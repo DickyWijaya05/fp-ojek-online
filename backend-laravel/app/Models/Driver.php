@@ -21,7 +21,14 @@ class Driver extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
+
+    // app/Models/Driver.php
+public function transactions()
+{
+    return $this->hasMany(\App\Models\Transaction::class, 'driver_id', 'user_id');
+}
+
     
 }

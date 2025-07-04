@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { interval, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ToastController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: false,
@@ -14,24 +15,23 @@ export class HomesPage implements OnInit, OnDestroy {
   user: any = null;
   isOnline: boolean = false;
   driverStatus: string = 'offline';
-
   orderPollingSub: Subscription | undefined;
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private toastCtrl: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     const token = localStorage.getItem('driver_token');
     if (token) {
-      this.http.get('http://localhost:8000/api/driver/profile', {
+      this.http.get(`${environment.apiUrl}/driver/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       }).subscribe({
         next: (res: any) => {
           this.user = res;
-          localStorage.setItem('driver_profile', JSON.stringify(res)); // Optional caching
+          localStorage.setItem('driver_profile', JSON.stringify(res));
           console.log('✅ Profil driver:', res);
         },
         error: (err) => {
@@ -49,12 +49,26 @@ export class HomesPage implements OnInit, OnDestroy {
     // this.stopPollingOrders();
   }
 
-  goToLokasi() {
+  async goToLokasi() {
+    if (!this.isOnline) {
+      const toast = await this.toastCtrl.create({
+        message: '⚠️ Kamu harus aktifkan status online dulu untuk mencari pelanggan!',
+        duration: 2500,
+        color: 'warning',
+        position: 'top'
+      });
+      await toast.present();
+      return;
+    }
+
+    // Kalau sudah online, lanjut navigasi
     this.router.navigate(['/driver-tracking']);
   }
 
-  toggleStatus() {
-    this.driverStatus = this.isOnline ? 'available' : 'offline';
+  toggleStatus(event: any) {
+    const checked = event.detail.checked;
+    this.isOnline = checked;
+    this.driverStatus = checked ? 'available' : 'offline';
 
     const token = localStorage.getItem('driver_token');
     if (!token) {
@@ -67,16 +81,17 @@ export class HomesPage implements OnInit, OnDestroy {
       status: this.driverStatus
     };
 
-    this.http.post('http://localhost:8000/api/driver-status', body, {
+    this.http.post(`${environment.apiUrl}/driver-status`, body, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).subscribe({
-      next: () => console.log('✅ Status berhasil diperbarui:', this.driverStatus),
-      error: (err) => console.error('❌ Gagal update status:', err)
+      next: () => {
+        console.log('✅ Status berhasil diperbarui ke:', this.driverStatus);
+      },
+      error: (err) => {
+        console.error('❌ Gagal update status:', err);
+      }
     });
   }
-
-  // --- Polling dan order toast code bisa diaktifkan lagi jika diperlukan ---
-
 }

@@ -3,8 +3,9 @@ import * as L from 'leaflet';
 import { Geolocation } from '@capacitor/geolocation';
 import axios from 'axios';
 import { OrderService } from '../../services/order.service'; // sesuaikan path
-import { ToastController } from '@ionic/angular'; // agar alert modern
+import { ToastController, AlertController } from '@ionic/angular'; // agar alert modern
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 
 
@@ -37,11 +38,25 @@ export class UserTrackingPage {
   incomingOrder: any = null;
   completedOrder: any = null;
   hasDrawnToDestination = false;
+  apiUrl = environment.apiUrl;
 
 
-  constructor(private orderService: OrderService, private toastCtrl: ToastController, private router: Router) { }
+
+  constructor(private orderService: OrderService, private toastCtrl: ToastController, private router: Router, private alertCtrl: AlertController) { }
+
+  async showAlert(message: string, header: string = 'Informasi') {
+    const alert = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: [{ text: 'OK', role: 'cancel', cssClass: 'elegant-alert-button' }],
+      cssClass: 'elegant-alert',
+      backdropDismiss: false
+    });
+    await alert.present();
+  }
 
   async ionViewDidEnter() {
+    this.resetTracking();
     const position = await Geolocation.getCurrentPosition();
     ({
       enableHighAccuracy: true,
@@ -107,7 +122,7 @@ export class UserTrackingPage {
     if (!query) return;
 
     try {
-      const response = await axios.get('http://localhost:8000/api/search-location', {
+      const response = await axios.get(`${environment.apiUrl}/search-location`, {
         params: { q: query, country: 'ID' }
       });
 
@@ -125,16 +140,16 @@ export class UserTrackingPage {
 
         this.map?.setView(coords, 15);
       } else {
-        alert('Lokasi tidak ditemukan');
+        this.showAlert('Lokasi tidak ditemukan');
       }
     } catch (error) {
-      alert('Gagal mencari lokasi');
+      this.showAlert('Gagal mencari lokasi');
     }
   }
 
   async findNearestDriver() {
     if (!this.startCoords) {
-      alert('Lokasi belum tersedia');
+      this.showAlert('Lokasi belum tersedia');
       return;
     }
 
@@ -142,7 +157,7 @@ export class UserTrackingPage {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:8000/api/nearest-driver', {
+      const response = await axios.post(`${environment.apiUrl}/nearest-driver`, {
         latitude: this.startCoords.lat,
         longitude: this.startCoords.lng,
       }, {
@@ -169,7 +184,7 @@ export class UserTrackingPage {
 
     } catch (err) {
       this.driverStatus = 'idle';
-      alert('❌ Driver tidak ditemukan');
+      this.showAlert(' Driver tidak ditemukan');
     }
   }
 
@@ -182,7 +197,7 @@ export class UserTrackingPage {
   }
 
   async calculateRoute() {
-    if (!this.startCoords || !this.destCoords) return alert('Koordinat belum lengkap');
+    if (!this.startCoords || !this.destCoords) return this.showAlert('Koordinat belum lengkap');
 
     try {
       const token = localStorage.getItem('token');
@@ -192,7 +207,7 @@ export class UserTrackingPage {
         this.routeLine = null;
       }
 
-      const response = await axios.post('http://localhost:8000/api/route', {
+      const response = await axios.post(`${environment.apiUrl}/route`, {
         coordinates: [
           [this.startCoords.lng, this.startCoords.lat],
           [this.destCoords.lng, this.destCoords.lat],
@@ -210,10 +225,10 @@ export class UserTrackingPage {
       if (this.routeLine && 'getBounds' in this.routeLine) {
         this.map?.fitBounds(this.routeLine.getBounds());
       }
-      alert(`✅ Rute berhasil!\nJarak: ${distance_km} km\nDurasi: ${duration_min} menit\nTarif: Rp${total_price}`);
+      this.showAlert(`Rute berhasil!\nJarak: ${distance_km} km\nDurasi: ${duration_min} menit\nTarif: Rp${total_price}`);
       await this.saveLocationsWithTarif(distance_km, duration_min, total_price);
     } catch (error) {
-      alert('Gagal menampilkan rute');
+      this.showAlert('Gagal menampilkan rute');
     }
   }
 
@@ -222,7 +237,7 @@ export class UserTrackingPage {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:8000/api/customer-location', {
+      await axios.post(`${environment.apiUrl}/customer-location`, {
         start_lat: this.startCoords.lat,
         start_lng: this.startCoords.lng,
         dest_lat: this.destCoords.lat,
@@ -236,9 +251,9 @@ export class UserTrackingPage {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      console.log('✅ Lokasi dan tarif disimpan');
+      console.log('Lokasi dan tarif disimpan');
     } catch (error) {
-      alert('❌ Gagal menyimpan data');
+      this.showAlert('❌ Gagal menyimpan data');
     }
   }
 
@@ -264,8 +279,8 @@ export class UserTrackingPage {
 
       // Ambil ID order dari response dan mulai polling
       this.orderId = response.data.data.id;
-      console.log('📦 Order ID:', this.orderId);
-      this.showToast('✅ Order berhasil dikirim, menunggu driver menerima...');
+      console.log('Order ID:', this.orderId);
+      this.showToast('Order berhasil dikirim, menunggu driver menerima...');
       this.startPollingOrderStatus();
 
       this.driverStatus = 'idle';
@@ -281,7 +296,7 @@ export class UserTrackingPage {
 
     this.driverTrackingInterval = setInterval(async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/driver/${driverId}/location`, {
+        const response = await axios.get(`${environment.apiUrl}/driver/${driverId}/location`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -295,7 +310,7 @@ export class UserTrackingPage {
               iconAnchor: [16, 32],
             })
           }).addTo(this.map!)
-            .bindPopup('🛵 Driver sedang menuju Anda')
+            .bindPopup('Driver sedang menuju Anda')
             .openPopup();
         } else {
           this.driverMarker.setLatLng([latitude, longitude]);
@@ -315,7 +330,7 @@ export class UserTrackingPage {
 
     this.orderPollingInterval = setInterval(async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/order/${this.orderId}`, {
+        const res = await axios.get(`${environment.apiUrl}/order/${this.orderId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -326,7 +341,7 @@ export class UserTrackingPage {
           case 'accepted':
             this.driverStatus = 'accepted';
             this.orderStatus = 'accepted';
-            this.showToast('✅ Driver menuju lokasi Anda');
+            this.showToast('Driver menuju lokasi Anda');
             this.startTrackingDriver(order.driver_id);
             break;
 
@@ -335,7 +350,7 @@ export class UserTrackingPage {
             if (this.orderStatus !== 'on_the_way') {
               this.driverStatus = 'accepted';
               this.orderStatus = 'on_the_way';
-              this.showToast('🛵 Driver sudah menerima order & OTW!');
+              this.showToast('Driver sudah menerima order & OTW!');
               this.startTrackingDriver(order.driver_id);
               this.drawRouteFromDriverToPickup(order);
             }
@@ -344,17 +359,26 @@ export class UserTrackingPage {
             if (this.orderStatus !== 'pickupReached') {
               this.driverStatus = 'accepted';
               this.orderStatus = 'pickupReached';
-              this.showToast('🚕 Driver sudah sampai, silakan naik!');
+              this.showToast('Driver sudah sampai, silakan naik!');
               if (!this.pickupSoundPlayed) {
                 try {
                   const audio = new Audio('assets/sound/nyampe.mp3');
                   await audio.play();
                   this.pickupSoundPlayed = true;
                 } catch (err) {
-                  console.warn('❌ Gagal play suara:', err);
+                  console.warn('Gagal play suara:', err);
                 }
               }
             }
+            break;
+          case 'cancelled_by_driver':
+            clearInterval(this.orderPollingInterval);
+            clearInterval(this.driverTrackingInterval);
+            this.driverStatus = 'idle';
+            this.orderStatus = null;
+            this.orderId = null;
+            this.showAlert('Maaf, driver membatalkan order. Silakan coba pesan ulang.');
+            this.resetTracking();
             break;
           case 'toDestination':
             this.driverStatus = 'accepted';
@@ -362,7 +386,7 @@ export class UserTrackingPage {
             if (!this.hasDrawnToDestination) {
               this.drawRoutePickupToDestination(order);
               this.hasDrawnToDestination = true;
-              this.showToast('🚀 Dalam perjalanan ke tujuan...');
+              this.showToast('Dalam perjalanan ke tujuan...');
             }
             break;
 
@@ -370,11 +394,11 @@ export class UserTrackingPage {
             this.driverStatus = 'completed';
             this.orderStatus = 'completed';
             this.completedOrder = order;
-            this.showToast('🎉 Perjalanan selesai. Terima kasih!');
+            this.showToast('Perjalanan selesai. Terima kasih!');
             clearInterval(this.driverTrackingInterval);
             clearInterval(this.orderPollingInterval);
 
-           this.completedOrder = order;
+            this.completedOrder = order;
 
             break;
 
@@ -417,7 +441,7 @@ export class UserTrackingPage {
     }
 
 
-    axios.post('http://localhost:8000/api/route', {
+    axios.post(`${environment.apiUrl}/route`, {
       coordinates: coords.map(([lat, lng]) => [lng, lat])
     }).then(res => {
       const geojson = res.data.route_geojson;
@@ -460,7 +484,7 @@ export class UserTrackingPage {
     }
 
     // Tambahkan rute (bisa request ulang atau pakai existing geojson jika tersedia)
-    axios.post('http://localhost:8000/api/route', {
+    axios.post(`${environment.apiUrl}/route`, {
       coordinates: coords.map(([lat, lng]) => [lng, lat])
     }).then(res => {
       const geojson = res.data.route_geojson;
@@ -477,6 +501,47 @@ export class UserTrackingPage {
     });
   }
 
+  async cancelOrderByCustomer() {
+    if (!this.orderId) {
+      this.showToast('❌ Tidak ada order yang sedang aktif');
+      return;
+    }
+
+    const alert = await this.alertCtrl.create({
+      header: 'Batalkan Order?',
+      message: 'Apakah kamu yakin ingin membatalkan order ini?',
+      buttons: [
+        {
+          text: 'Tidak',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Ya, Batalkan',
+          handler: async () => {
+            try {
+              const token = localStorage.getItem('token');
+              await axios.post(`${this.apiUrl}/customer/order-status/${this.orderId}`, {
+                status: 'cancelled_by_customer'
+              }, {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+
+              this.showToast('✅ Order dibatalkan');
+              this.resetTracking();
+            } catch (err) {
+              this.showToast('❌ Gagal membatalkan order');
+              console.error('Cancel error:', err);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
 
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
@@ -495,7 +560,7 @@ export class UserTrackingPage {
         const token = localStorage.getItem('token');
 
         // Kirim update status ke backend
-        await axios.post(`http://localhost:8000/api/customer/order-status/${this.orderId}`, {
+        await axios.post(`${environment.apiUrl}/customer/order-status/${this.orderId}`, {
           status: 'toDestination'
         }, {
           headers: { Authorization: `Bearer ${token}` }

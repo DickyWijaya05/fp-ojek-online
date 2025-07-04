@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DriverLocation;
+use App\Models\Driver;
 
 class DriverLocationController extends Controller
 {
@@ -44,20 +45,23 @@ class DriverLocationController extends Controller
         ]);
 
         $location = DriverLocation::firstOrNew(['driver_id' => $driverId]);
-
         $location->status = $validated['status'];
         // isi default lokasi kalau belum ada
         $location->latitude = $location->latitude ?? 0;
         $location->longitude = $location->longitude ?? 0;
         $location->save();
 
+        $driver = \App\Models\Driver::where('user_id', $driverId)->first();
+        if ($driver) {
+            $driver->status = $validated['status'] === 'available' ? 'online' : 'offline';
+            $driver->save();
+        }
+
         return response()->json([
             'message' => '✅ Status driver diperbarui',
             'data' => $location
         ]);
     }
-
-
 
 
 
@@ -104,18 +108,18 @@ class DriverLocationController extends Controller
             'data' => $nearestDriver
         ]);
     }
-public function getLocation($driverId)
-{
-    $location = DriverLocation::where('driver_id', $driverId)->first();
+    public function getLocation($driverId)
+    {
+        $location = DriverLocation::where('driver_id', $driverId)->first();
 
-    if (!$location) {
-        return response()->json(['message' => 'Lokasi belum tersedia'], 404);
+        if (!$location) {
+            return response()->json(['message' => 'Lokasi belum tersedia'], 404);
+        }
+
+        return response()->json([
+            'latitude' => $location->latitude,
+            'longitude' => $location->longitude,
+        ]);
     }
-
-    return response()->json([
-        'latitude' => $location->latitude,
-        'longitude' => $location->longitude,
-    ]);
-}
 
 }

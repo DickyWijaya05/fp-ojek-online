@@ -1,5 +1,17 @@
+.modern-toolbar {
+  --background: #fcd949;
+  color: rgb(0, 0, 0);
+}
+
+ion-title {
+  font-weight: 600 !important;
+}
+
+
+
 .page-modern {
-  --ion-background-color: #fffaf3;
+  --ion-background-color: #fefbe8;
+  background-color: #fefbe8;
 }
 
 #map-container {
@@ -11,42 +23,190 @@
   height: 100%;
   width: 100%;
   z-index: 1;
+  border-radius: 0;
 }
 
 .overlay-wrapper {
   position: absolute;
   bottom: 0;
-  width: 100%;
+  left: 0;
+  width: 95%;
   z-index: 999;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .card-modern {
-  border-radius: 16px;
+  border-radius: 18px;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease-in-out;
+  padding: 12px;
 }
 
 .card-modern h2,
 .card-modern ion-card-title {
   font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 6px;
 }
 
-.card-modern ion-card-content p {
+.card-modern p {
+  font-size: 14px;
+  color: #444;
   margin-bottom: 10px;
 }
 
 .form-wrapper {
-  background: #ffde59;
-  color: #333;
+  background: #fcd949;
+  border-radius: 18px;
+  padding: 20px 16px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
 }
 
-.input-modern ion-input {
-  font-size: 14px;
+.input-modern {
+  --background: #ffffff;
+  --border-radius: 12px;
+  border: 1px solid #ccc;
+  margin-bottom: 12px;
+  padding-left: 8px;
+  border-radius: 12px;
+
+  ion-icon {
+    font-size: 20px;
+    color: #444;
+  }
+
+  ion-input {
+    font-size: 15px;
+    color: black;
+    padding: 10px 4px;
+  }
+}
+
+ion-button {
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-button[color='warning'] {
+  --background: #00b94a;
+  color: #fff;
+}
+
+ion-button[color='success'] {
+  --background: #007f3f;
 }
 
 .completed-card {
   border: 2px solid #00c853;
+  background: #eaffed;
 }
+
+ion-avatar img {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+
+
+/* Card khusus untuk status "searching" dengan warna kuning */
+.card-searching-yellow {
+  background-color: #fcd949; /* Warna kuning cerah */
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.card-searching-yellow h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin-top: 12px;
+}
+
+.card-searching-yellow p {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.card-searching-yellow ion-button {
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+
+
+/* ✅ CARD: Driver Found */
+.card-modern.driver-found-card {
+  border-radius: 18px;
+  background: #fcd949;
+  box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.07);
+  padding: 12px 0;
+  transition: all 0.3s ease-in-out;
+}
+
+/* ITEM: Baris info driver (avatar + nama + telp) */
+.driver-found-card ion-item {
+  padding: 10px 16px;
+  --background: transparent;
+}
+
+/* AVATAR */
+.driver-found-card ion-avatar {
+  width: 52px;
+  height: 52px;
+  margin-right: 12px;
+}
+
+.driver-found-card ion-avatar img {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* LABEL: Nama & Telepon */
+.driver-found-card ion-label h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.driver-found-card ion-label p {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* CARD CONTENT: Tombol-tombol */
+.driver-found-card ion-card-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* BUTTON STYLE */
+.driver-found-card ion-button {
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+

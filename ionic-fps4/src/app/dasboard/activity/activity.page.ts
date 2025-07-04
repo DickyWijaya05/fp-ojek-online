@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { format } from 'date-fns';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: false,
@@ -23,7 +24,7 @@ export class ActivityPage implements OnInit {
   fetchRiwayat() {
     const token = localStorage.getItem('token'); // Ambil token dari localStorage
 
-this.http.get<any>('http://localhost:8000/api/customer/transactions', {
+this.http.get<any>(`${environment.apiUrl}/customer/transactions`, {
   headers: {
     Authorization: `Bearer ${token}`
   }

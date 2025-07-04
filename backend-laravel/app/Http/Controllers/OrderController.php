@@ -199,7 +199,6 @@ class OrderController extends Controller
 
 
 
-
     // Menampilkan detail order (untuk polling status dari user)
     public function show($id)
     {
@@ -208,7 +207,7 @@ class OrderController extends Controller
         \Log::info('🔍 Auth user saat polling:', ['id' => $user->id ?? null, 'level' => $user->level_id ?? null]);
 
 
-        $order = Order::with(['driver', 'user']) // pastikan relasi driver->user tersedia
+        $order = Order::with(['driver', 'user', 'driverProfile.user']) // pastikan relasi driver->user tersedia
             ->where('id', $id)
             ->where(function ($query) use ($user) {
                 if ($user->level_id == 3) {
@@ -255,6 +254,39 @@ class OrderController extends Controller
             'status' => $order->status,
         ]);
     }
+
+
+    public function cancelOrder(Request $request, $id)
+{
+    $user = auth()->user();
+
+    if (!$user) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $order = Order::find($id);
+
+    if (!$order) {
+        return response()->json(['message' => 'Order tidak ditemukan'], 404);
+    }
+
+    // Validasi siapa yang cancel
+    if ($user->level_id == 2 && $order->driver_id === $user->id) {
+        $order->status = 'cancelled_by_driver';
+    } elseif ($user->level_id == 3 && $order->user_id === $user->id) {
+        $order->status = 'cancelled_by_customer';
+    } else {
+        return response()->json(['message' => 'Anda tidak memiliki izin membatalkan order ini'], 403);
+    }
+
+    $order->save();
+
+    return response()->json([
+        'message' => 'Order berhasil dibatalkan oleh ' . ($user->level_id == 2 ? 'driver' : 'customer'),
+        'status' => $order->status,
+    ]);
+}
+
 
     public function customerUpdateStatus(Request $request, $id)
     {
@@ -343,103 +375,103 @@ class OrderController extends Controller
 
 
     // buat ambil foto qris per id
-public function getDriverQris($id)
-{
-    try {
-        $order = Order::with('driverProfile')->findOrFail($id);
+    public function getDriverQris($id)
+    {
+        try {
+            $order = Order::with('driverProfile')->findOrFail($id);
 
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+            if (!auth()->check()) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
 
-        $user = auth()->user();
+            $user = auth()->user();
 
-        $isCustomer = $user->level_id == 3 && $order->user_id === $user->id;
-        $isDriver   = $user->level_id == 2 && $order->driver_id === $user->id;
+            $isCustomer = $user->level_id == 3 && $order->user_id === $user->id;
+            $isDriver = $user->level_id == 2 && $order->driver_id === $user->id;
 
-         \Log::info('🔐 QRIS Access Debug', [
-            'auth_user_id' => $user->id,
-            'auth_level_id' => $user->level_id,
-            'order_user_id' => $order->user_id,
-            'order_driver_id' => $order->driver_id,
-            'is_customer' => $isCustomer,
-            'is_driver' => $isDriver
-        ]);
-
-        if (!($isCustomer || $isDriver)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        if (!$order->driverProfile || !$order->driverProfile->foto_qris) {
-            return response()->json(['message' => 'QRIS tidak tersedia'], 404);
-        }
-
-        $fotoQris = $order->driverProfile->foto_qris;
-
-        return response()->json([
-            'foto_qris' => asset('storage/qris/'. $order->driverProfile->foto_qris)
-        ]);
-
-    } catch (\Throwable $e) {
-        \Log::error('Gagal mengambil foto QRIS driver: ' . $e->getMessage());
-        return response()->json(['message' => 'Gagal memuat QRIS'], 500);
-    }
-}
-
-public function setPaymentMethod(Request $request, $id)
-{
-    try {
-        $user = auth()->user();
-
-        if (!$user || $user->level_id != 3) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $request->validate([
-            'payment_method' => 'required|in:tunai,qris'
-        ]);
-
-        // Cek apakah order valid dan milik user ini
-        $order = Order::where('id', $id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        if (!$order) {
-            return response()->json(['message' => 'Order tidak ditemukan atau bukan milik Anda'], 404);
-        }
-
-        // Pastikan transaksi sudah ada
-        $transaction = DB::table('transactions')
-            ->where('order_id', $id)
-            ->where('customer_id', $user->id)
-            ->first();
-
-        if (!$transaction) {
-            // Sebagai fallback, buat transaksi kalau belum ada
-            DB::table('transactions')->insert([
-                'order_id' => $id,
-                'customer_id' => $user->id,
-                'driver_id' => $order->driver_id,
-                'total_price' => $order->total_price,
-                'metode' => $request->payment_method,
-                'created_at' => now(),
-                'updated_at' => now(),
+            \Log::info('🔐 QRIS Access Debug', [
+                'auth_user_id' => $user->id,
+                'auth_level_id' => $user->level_id,
+                'order_user_id' => $order->user_id,
+                'order_driver_id' => $order->driver_id,
+                'is_customer' => $isCustomer,
+                'is_driver' => $isDriver
             ]);
-        } else {
-            // Update metode pembayaran
-            DB::table('transactions')
-                ->where('id', $transaction->id)
-                ->update([
-                    'metode' => $request->payment_method,
-                    'updated_at' => now()
-                ]);
-        }
 
-        return response()->json(['message' => 'Metode pembayaran berhasil disimpan']);
-    } catch (\Throwable $e) {
-        \Log::error('❌ Gagal set metode pembayaran: ' . $e->getMessage());
-        return response()->json(['message' => 'Gagal menyimpan metode pembayaran'], 500);
+            if (!($isCustomer || $isDriver)) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            if (!$order->driverProfile || !$order->driverProfile->foto_qris) {
+                return response()->json(['message' => 'QRIS tidak tersedia'], 404);
+            }
+
+            $fotoQris = $order->driverProfile->foto_qris;
+
+            return response()->json([
+                'foto_qris' => asset('storage/qris/' . $order->driverProfile->foto_qris)
+            ]);
+
+        } catch (\Throwable $e) {
+            \Log::error('Gagal mengambil foto QRIS driver: ' . $e->getMessage());
+            return response()->json(['message' => 'Gagal memuat QRIS'], 500);
+        }
     }
-}
+
+    public function setPaymentMethod(Request $request, $id)
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user || $user->level_id != 3) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            $request->validate([
+                'payment_method' => 'required|in:tunai,qris'
+            ]);
+
+            // Cek apakah order valid dan milik user ini
+            $order = Order::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$order) {
+                return response()->json(['message' => 'Order tidak ditemukan atau bukan milik Anda'], 404);
+            }
+
+            // Pastikan transaksi sudah ada
+            $transaction = DB::table('transactions')
+                ->where('order_id', $id)
+                ->where('customer_id', $user->id)
+                ->first();
+
+            if (!$transaction) {
+                // Sebagai fallback, buat transaksi kalau belum ada
+                DB::table('transactions')->insert([
+                    'order_id' => $id,
+                    'customer_id' => $user->id,
+                    'driver_id' => $order->driver_id,
+                    'total_price' => $order->total_price,
+                    'metode' => $request->payment_method,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } else {
+                // Update metode pembayaran
+                DB::table('transactions')
+                    ->where('id', $transaction->id)
+                    ->update([
+                        'metode' => $request->payment_method,
+                        'updated_at' => now()
+                    ]);
+            }
+
+            return response()->json(['message' => 'Metode pembayaran berhasil disimpan']);
+        } catch (\Throwable $e) {
+            \Log::error('❌ Gagal set metode pembayaran: ' . $e->getMessage());
+            return response()->json(['message' => 'Gagal menyimpan metode pembayaran'], 500);
+        }
+    }
 
 }

@@ -20,47 +20,47 @@ class AdminController extends Controller
 
     // Tampilkan dashboard
     public function dashboard()
-{
-    $totalUsers = User::count();
-    $totalDrivers = User::where('level_id', 2)->count();
+    {
+        $totalUsers = User::count();
+        $totalDrivers = User::where('level_id', 2)->count();
 
-    // Ambil aktivitas login/logout selama 7 hari terakhir
-    $startDate = now()->subDays(6)->startOfDay(); // Hari ke-7 ke belakang
-    $endDate = now()->endOfDay();
+        // Ambil aktivitas login/logout selama 7 hari terakhir
+        $startDate = now()->subDays(6)->startOfDay(); // Hari ke-7 ke belakang
+        $endDate = now()->endOfDay();
 
-    $logs = \App\Models\ActivityLog::where('level_id', 2)
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->selectRaw('DATE(created_at) as tanggal,
+        $logs = \App\Models\ActivityLog::where('level_id', 2)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw('DATE(created_at) as tanggal,
                      SUM(activity = "Login") as login,
                      SUM(activity = "Logout") as logout')
-        ->groupByRaw('DATE(created_at)')
-        ->orderByRaw('DATE(created_at)')
-        ->get();
+            ->groupByRaw('DATE(created_at)')
+            ->orderByRaw('DATE(created_at)')
+            ->get();
 
-    // Format label dan data untuk chart
-    $labels = [];
-    $logins = [];
-    $logouts = [];
+        // Format label dan data untuk chart
+        $labels = [];
+        $logins = [];
+        $logouts = [];
 
-    for ($i = 6; $i >= 0; $i--) {
-        $tanggal = now()->subDays($i)->format('Y-m-d');
-        $label = \Carbon\Carbon::parse($tanggal)->translatedFormat('D');
+        for ($i = 6; $i >= 0; $i--) {
+            $tanggal = now()->subDays($i)->format('Y-m-d');
+            $label = \Carbon\Carbon::parse($tanggal)->translatedFormat('D');
 
-        $data = $logs->firstWhere('tanggal', $tanggal);
+            $data = $logs->firstWhere('tanggal', $tanggal);
 
-        $labels[] = $label;
-        $logins[] = $data ? (int) $data->login : 0;
-        $logouts[] = $data ? (int) $data->logout : 0;
+            $labels[] = $label;
+            $logins[] = $data ? (int) $data->login : 0;
+            $logouts[] = $data ? (int) $data->logout : 0;
+        }
+
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'totalDrivers',
+            'labels',
+            'logins',
+            'logouts'
+        ));
     }
-
-    return view('admin.dashboard', compact(
-        'totalUsers',
-        'totalDrivers',
-        'labels',
-        'logins',
-        'logouts'
-    ));
-}
 
 
 
@@ -77,8 +77,8 @@ class AdminController extends Controller
         $admin = Auth::user();
 
         $request->validate([
-            'name'   => 'required|string|max:255',
-            'email'  => 'required|email|unique:users,email,' . $admin->id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $admin->id,
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -123,39 +123,55 @@ class AdminController extends Controller
     }
 
     // Manajemen pengguna
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::all();
+        $filter = $request->query('filter');
+
+        $query = User::query();
+
+        if ($filter === 'customer') {
+            $query->where('level_id', 3); // 3 = customer
+        } elseif ($filter === 'driver') {
+            $query->where('level_id', 2); // 2 = driver
+        }
+
+        $users = $query->get();
         return view('admin.users.users', compact('users'));
     }
 
     public function verify($id)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
-        if (!$user) {
-            return redirect()->back()->with('error', 'User tidak ditemukan.');
+        // Hanya bisa diverifikasi kalau statusnya bukan aktif
+        if ($user->status !== 'aktif') {
+            $user->status = 'aktif';
+            $user->save();
+
+            return back()->with('success', 'User berhasil diverifikasi.');
         }
 
-        $user->is_verified = true;
-        $user->save();
-
-        return redirect()->back()->with('success', 'User berhasil diverifikasi.');
+        return back()->with('info', 'User sudah dalam status aktif.');
     }
+
 
     public function activate($id)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
-        if (!$user) {
-            return redirect()->back()->with('error', 'User tidak ditemukan.');
+        if ($user->status === 'aktif') {
+            $user->status = 'deactive';
+        } elseif ($user->status === 'deactive') {
+            $user->status = 'aktif';
+        } else {
+            return back()->with('error', 'Status hanya bisa diubah jika saat ini aktif atau deactive.');
         }
 
-        $user->is_active = !$user->is_active;
         $user->save();
 
-        return redirect()->back()->with('success', 'Status user berhasil diubah.');
+        return back()->with('success', 'Status pengguna berhasil diperbarui.');
     }
+
 
     public function destroy($id)
     {
@@ -175,14 +191,14 @@ class AdminController extends Controller
         return view('admin.drivers');
     }
 
-   public function statusDriver()
-{
-    $drivers = Driver::with('user')
-        ->select('id', 'user_id', 'foto_profil', 'status', 'rating')
-        ->get();
+    public function statusDriver()
+    {
+        $drivers = Driver::with('user')
+            ->select('id', 'user_id', 'foto_profil', 'status', 'rating')
+            ->get();
 
-    return view('admin.status-driver', compact('drivers'));
-}
+        return view('admin.status-driver', compact('drivers'));
+    }
 
 
     public function tarif()

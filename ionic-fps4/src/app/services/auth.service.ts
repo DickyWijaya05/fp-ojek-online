@@ -12,6 +12,7 @@ import { BehaviorSubject } from 'rxjs';
 import { firebaseConfig } from './firebase.config';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment'; // ✅ Tambahkan ini
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,6 @@ export class AuthService {
 
     onAuthStateChanged(this.auth, (currentUser) => {
       if (currentUser) {
-        // Tidak langsung kirim ke Laravel di sini, biarkan login yang handle
         this.user.next(currentUser);
       } else {
         this.user.next(null);
@@ -63,27 +63,30 @@ export class AuthService {
   /**
    * Kirim data user dari Google ke backend Laravel
    */
- sendUserDataToLaravel(user: any, levelId: number = 3) {
-  const payload = {
-    uid: user.uid,
-    name: user.displayName || user.name || localStorage.getItem('name') || 'Pengguna',
-    email: user.email || '',
-    phone: user.phoneNumber || '',
-    photo_url: user.photoURL || '',
-    level_id: levelId
-  };
+  sendUserDataToLaravel(user: any, levelId: number = 3) {
+    const payload = {
+      uid: user.uid,
+      name: user.displayName || user.name || localStorage.getItem('name') || 'Pengguna',
+      email: user.email || '',
+      phone: user.phoneNumber || '',
+      photo_url: user.photoURL || '',
+      level_id: levelId
+    };
 
-  // Kembalikan Observable agar bisa di-.subscribe() dari luar
-  return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/store-user', payload);
-}
-
-
+    return this.http.post<{ user: any; token: string }>(
+      `${environment.apiUrl}/store-user`, // ✅ pakai env
+      payload
+    );
+  }
 
   /**
    * Ambil data user dari backend berdasarkan email
    */
   getUserFromLaravel(email: string) {
-    return this.http.post<any>('http://localhost:8000/api/get-user', { email });
+    return this.http.post<any>(
+      `${environment.apiUrl}/get-user`, // ✅ pakai env
+      { email }
+    );
   }
 
   /**
@@ -91,21 +94,30 @@ export class AuthService {
    */
   loginWithEmail(email: string, password: string) {
     const data = { email, password };
-    return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/login', data);
+    return this.http.post<{ user: any; token: string }>(
+      `${environment.apiUrl}/login`, // ✅ pakai env
+      data
+    );
   }
 
   /**
    * Registrasi manual customer
    */
   registerUser(data: any) {
-    return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/register', data);
+    return this.http.post<{ user: any; token: string }>(
+      `${environment.apiUrl}/register`, // ✅ pakai env
+      data
+    );
   }
 
   /**
    * Registrasi driver
    */
   registerDriver(data: any) {
-    return this.http.post<{ user: any; token: string }>('http://localhost:8000/api/register-driver', data);
+    return this.http.post<{ user: any; token: string }>(
+      `${environment.apiUrl}/register-driver`, // ✅ pakai env
+      data
+    );
   }
 
   /**

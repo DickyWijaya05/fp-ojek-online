@@ -41,6 +41,11 @@ Route::middleware(['auth', 'admin']) // middleware untuk keamanan akses
         Route::put('/users/{id}/verify', [AdminController::class, 'verify'])->name('users.verify');
         Route::put('/users/{id}/activate', [AdminController::class, 'activate'])->name('users.activate');
         Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
+        // Dokumen driver
+        Route::get('/driver/{id}/documents', [DriverController::class, 'showDocuments'])->name('driver.documents');
+        Route::put('/driver/{id}/documents/approve', [DriverController::class, 'approveDocument'])->name('driver.documents.approve');
+        Route::put('/driver/{id}/documents/reject', [DriverController::class, 'rejectDocument'])->name('driver.documents.reject');
+
 
         // Manajemen Status Driver
         Route::get('/status-driver', [AdminController::class, 'statusDriver'])->name('status-driver');

@@ -80,7 +80,7 @@ export class FormRegisterPage implements OnInit {
     this.authService.registerUser(data).subscribe({
       next: async (res) => {
         await this.showAlert('Registrasi berhasil!', 'Sukses');
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/login-costumer');
       },
       error: async (err) => {
         console.error('❌ Registrasi gagal:', err);

@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 import { Observable, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8000/api/user';
+  private apiUrl = `${environment.apiUrl}/user`;
 
   constructor(private http: HttpClient, private storage: Storage) {
     this.storage.create();

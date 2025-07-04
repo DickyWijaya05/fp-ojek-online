@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone:false,
@@ -45,7 +46,7 @@ export class AccountPage implements OnInit {
       jenis_kelamin: this.profile.gender === 'Male' ? 'L' : 'P',
     };
 
-    this.http.put('http://localhost:8000/api/profile', data, {
+    this.http.put(`${environment.apiUrl}/profile`, data, {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe(() => {
       this.isEditing = false;
@@ -59,7 +60,7 @@ export class AccountPage implements OnInit {
     const formData = new FormData();
     formData.append('foto_profil', file);
 
-    this.http.post('http://localhost:8000/api/profile/upload-photo', formData, {
+    this.http.post(`${environment.apiUrl}/profile/upload-photo`, formData, {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe((res: any) => {
       this.profile.foto_profil = res.foto_profil;
@@ -70,8 +71,9 @@ export class AccountPage implements OnInit {
     this.fileInput.nativeElement.click();
   }
 
-  logout() {
-  localStorage.removeItem('token'); // Hapus token customer
+logout() {
+  localStorage.clear();
+  sessionStorage.clear(); // Hapus token customer
   window.location.href = '/login-costumer'; // Atau pakai router.navigate(['/login']) kalau routing Angular
 }
 

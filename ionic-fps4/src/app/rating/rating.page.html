@@ -1,18 +1,26 @@
 <ion-content class="ion-padding custom-content">
+  <!-- Tombol Tutup -->
   <ion-button fill="clear" class="close-button" (click)="dismiss()">
     <ion-icon name="close-outline"></ion-icon>
   </ion-button>
 
   <div class="center-content">
-    <img src="assets/Profile.png" alt="driver" class="profile-image" />
+    <!-- Foto Driver -->
+    <img [src]="driverPhotoUrl || 'assets/Profile.png'" alt="driver" class="profile-image" />
 
-    <h2 class="title">Bagaimana pengemudinya</h2>
+    <!-- Nama Driver -->
+    <h2 class="title">{{ driverName || 'Driver' }}</h2>
+
+    <!-- Pertanyaan Rating -->
+    <h3 class="title">Bagaimana pengemudinya?</h3>
     <p class="subtitle">
-      Bantu GoCabss menjadi lebih baik dengan memberi rating pada perjalanan ini
+      Bantu GoCabss menjadi lebih baik dengan memberi rating pada perjalanan ini.
     </p>
 
     <div class="rating-line"></div>
-    <div class="stars" [class.selected]="selected === 'stars'" (click)="selectMethod('stars')">
+
+    <!-- Bintang Rating -->
+    <div class="stars selected">
       <ng-container *ngFor="let star of stars; let i = index">
         <ion-icon
           [name]="i < rating ? 'star' : 'star-outline'"
@@ -22,25 +30,35 @@
       </ng-container>
     </div>
 
+    <!-- Komentar -->
+    <ion-textarea
+      [(ngModel)]="comment"
+      placeholder="Tulis komentar (opsional)"
+      autoGrow
+      class="comment-box">
+    </ion-textarea>
+
     <div class="rating-line"></div>
 
+    <!-- Info Perjalanan -->
     <div class="trip-details">
       <div class="row">
-        <span>Ride :</span>
-        <strong></strong>
+        <span>Jenis Kendaraan:</span>
+        <strong>{{ rideType }}</strong>
       </div>
       <div class="row">
-        <span>Payment :</span>
-        <strong></strong>
+        <span>Metode Pembayaran:</span>
+        <strong>{{ paymentMethod | titlecase }}</strong>
       </div>
       <div class="row">
-        <span>Total tarif :</span>
-        <strong></strong>
+        <span>Total Tarif:</span>
+        <strong>Rp{{ totalPrice | number:'1.0-0' }}</strong>
       </div>
     </div>
   </div>
 
-  <ion-button expand="block" shape="round" class="rate-button" (click)="confirmMethod()">
-    Give Rate
+  <!-- Tombol Kirim -->
+  <ion-button expand="block" shape="round" class="rate-button" (click)="submitRating()">
+    Kirim Rating
   </ion-button>
 </ion-content>

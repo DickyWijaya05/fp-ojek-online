@@ -36,33 +36,34 @@
     </ion-card>
 
     <!-- ⏳ Searching Driver -->
-    <ion-card class="overlay-wrapper card-modern animate-pulse" *ngIf="driverStatus === 'searching'">
+    <ion-card class="overlay-wrapper card-modern card-searching-yellow animate-pulse"
+      *ngIf="driverStatus === 'searching'">
       <ion-card-content>
         <ion-spinner name="crescent" color="primary"></ion-spinner>
         <h2>Mencari driver terdekat...</h2>
         <p class="text-muted">Tunggu sebentar ya...</p>
-        <ion-button expand="block" fill="outline" color="danger" shape="round"
-          (click)="driverStatus = 'idle'">Batal</ion-button>
+        <ion-button expand="block" color="danger" shape="round" (click)="driverStatus = 'idle'">Batal</ion-button>
       </ion-card-content>
     </ion-card>
 
     <!-- ✅ Driver Found -->
-    <ion-card class="overlay-wrapper card-modern" *ngIf="driverStatus === 'found' && selectedDriver">
+    <ion-card class="overlay-wrapper card-modern driver-found-card" *ngIf="driverStatus === 'found' && selectedDriver">
       <ion-item lines="none">
         <ion-avatar slot="start">
-          <img src="assets/driver.png" />
+          <!-- HTML -->
+          <img *ngIf="selectedDriver?.driverProfile?.foto_profil"
+            [src]="apiUrl + '/storage/profiles/' + selectedDriver.driverProfile.foto_profil" alt="Foto Driver" />
         </ion-avatar>
         <ion-label>
           <h2>{{ selectedDriver.user.name }}</h2>
-          <p><ion-icon name="call-outline"></ion-icon> {{ selectedDriver.user.phone ?? '08xxxx' }}</p>
+          <p><ion-icon name="call-outline"></ion-icon> {{ selectedDriver.user?.phone ?? '089884777362' }}</p>
         </ion-label>
       </ion-item>
       <ion-card-content>
         <ion-button expand="block" color="primary" shape="round" (click)="showDriverInfo()">Lihat Info
           Driver</ion-button>
-        <ion-button expand="block" color="success" shape="round" (click)="orderDriver()">🚖 Order Driver</ion-button>
-        <ion-button expand="block" fill="outline" color="medium" shape="round"
-          (click)="driverStatus = 'idle'">Cancel</ion-button>
+        <ion-button expand="block" color="success" shape="round" (click)="orderDriver()"> Order Driver</ion-button>
+        <ion-button expand="block" color="danger" shape="round" (click)="driverStatus = 'idle'">Cancel</ion-button>
       </ion-card-content>
     </ion-card>
 
@@ -70,21 +71,18 @@
     <ion-card class="overlay-wrapper card-modern" *ngIf="driverStatus === 'info' && selectedDriver">
       <ion-item lines="none">
         <ion-avatar slot="start">
-          <img src="assets/driver.png" />
+          <img [src]="apiUrl + '/storage/profiles/' + selectedDriver.foto_profil" />
         </ion-avatar>
         <ion-label>
           <h2>{{ selectedDriver.user.name }}</h2>
-          <p>{{ selectedDriver.user.phone ?? '-' }}</p>
+          <p>{{ selectedDriver.user?.phone ?? '-' }}</p>
         </ion-label>
       </ion-item>
       <ion-card-content>
-        <p>⭐ 4.8 | 9205 Order</p>
+        <p>⭐ 4.8 | 20 Order</p>
         <p><ion-icon name="car-outline"></ion-icon> {{ selectedDriver.vehicle ?? 'Beat' }} • {{ selectedDriver.color ??
           'Merah' }}</p>
         <p><ion-icon name="pricetag-outline"></ion-icon> Plat: {{ selectedDriver.plate_number ?? 'T 7564 NU' }}</p>
-        <ion-button expand="block" color="success"><ion-icon slot="start" name="call"></ion-icon> Call</ion-button>
-        <ion-button expand="block" color="secondary"><ion-icon slot="start" name="chatbubbles"></ion-icon>
-          Chat</ion-button>
         <ion-button expand="block" fill="outline" (click)="driverStatus = 'found'">Kembali </ion-button>
       </ion-card-content>
     </ion-card>
@@ -95,6 +93,9 @@
         <ion-icon name="bicycle-outline" color="success"></ion-icon>
         <strong>Driver sedang menuju Anda...</strong>
         <p>Kami akan mengirim notifikasi saat driver tiba di lokasi.</p>
+        <ion-button expand="block" color="danger" (click)="cancelOrderByCustomer()">
+          ❌ Batalkan Order
+        </ion-button>
       </ion-card-content>
     </ion-card>
 
@@ -127,7 +128,7 @@
         <ion-avatar class="ion-margin-bottom">
           <img [src]="'http://localhost:8000/storage/' + completedOrder.driver?.profile_photo" />
         </ion-avatar>
-        <p><strong>Nama Driver:</strong> {{ completedOrder.driver?.user?.name }}</p>
+        <p><strong>Nama Driver:</strong> {{ completedOrder.driverProfile?.user?.name }}</p>
         <p><strong>Jarak:</strong> {{ completedOrder.distance_km }} km</p>
         <p><strong>Durasi:</strong> {{ completedOrder.duration_min }} menit</p>
         <p><strong>Total:</strong> Rp{{ completedOrder.total_price }}</p>

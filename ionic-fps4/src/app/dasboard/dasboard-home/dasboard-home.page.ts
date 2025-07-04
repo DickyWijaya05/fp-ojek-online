@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment'; // ✅ Import environment
 
 @Component({
   standalone: false,
@@ -21,7 +22,7 @@ export class DasboardHomePage implements OnInit {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    this.http.get('http://localhost:8000/api/profile', {
+    this.http.get(`${environment.apiUrl}/profile`, {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
       next: (res: any) => {

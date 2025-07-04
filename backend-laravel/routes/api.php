@@ -15,6 +15,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\Api\OrderPollingController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\RatingController;
+
 
 // Rute publik
 Route::post('/register', [ApiAuthController::class, 'register']);
@@ -50,6 +52,10 @@ Route::middleware('auth:sanctum')->post('/nearest-driver', [DriverLocationContro
 Route::middleware(['auth:sanctum'])->get('/driver/{id}/location', [DriverLocationController::class, 'getLocation']);
 Route::middleware('auth:sanctum')->get('/driver/route-to-destination/{id}', [OrderController::class, 'routeToDestination']);
 Route::middleware('auth:sanctum')->post('/driver/order-status/{id}', [OrderController::class, 'updateStatus']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/order/{id}/cancel', [OrderController::class, 'cancelOrder']);
+});
+
 
 
 
@@ -79,7 +85,7 @@ Route::middleware(['auth:sanctum', 'is_customer'])->group(function () {
     Route::post('/order', [OrderController::class, 'store']);
     Route::post('/customer/order-status/{id}', [OrderController::class, 'customerUpdateStatus']);
     Route::get('/customer/transactions', [OrderController::class, 'customerTransactionHistory']);
-    Route::put('/order/{id}/set-payment-method', [OrderController::class, 'setPaymentMethod']);    
+    Route::put('/order/{id}/set-payment-method', [OrderController::class, 'setPaymentMethod']);
 });
 
 
@@ -101,9 +107,7 @@ Route::middleware(['auth:sanctum', 'is_driver'])->group(function () {
     Route::get('/driver/incoming-orders', [OrderPollingController::class, 'getIncomingOrders']);
     Route::post('/driver/accept-order', [OrderPollingController::class, 'accept']);
     Route::post('/driver/reject-order', [OrderPollingController::class, 'reject']);
-
     Route::post('/driver/accept-order/{id}', [OrderController::class, 'acceptOrder']);
-    Route::post('/driver/reject-order/{id}', [OrderController::class, 'rejectOrder']);
     Route::get('/driver/incoming-order', [OrderController::class, 'incomingOrder']);
     Route::get('/driver/transactions', [TransactionController::class, 'driverTransactions']);
 
@@ -115,9 +119,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/driver/profile', [DriverProfileController::class, 'profile']);
     Route::put('/driver/profile', [DriverProfileController::class, 'updateProfile']);
     Route::post('/driver/profile/upload-qris', [DriverProfileController::class, 'uploadQris']);
+    Route::post('/rate-driver', [RatingController::class, 'store']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store']);
     Route::get('/transactions', [TransactionController::class, 'index']); // opsional
+    Route::get('/payment-details/order/{orderId}', [TransactionController::class, 'getPaymentDetails']);
+    Route::get('/driver-profile/order/{orderId}', [TransactionController::class, 'getDriverProfileByOrder']);
 });

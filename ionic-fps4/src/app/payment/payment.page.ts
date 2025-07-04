@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AlertController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-payment',
@@ -19,7 +20,7 @@ export class PaymentPage implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.selected = '';
@@ -44,44 +45,42 @@ export class PaymentPage implements OnInit {
   }
 
   async confirmMethod() {
-  if (!this.selected) {
+    if (!this.selected) {
+      const alert = await this.alertController.create({
+        header: '💳 Metode Belum Dipilih',
+        message: `
+          Silakan pilih metode pembayaran terlebih dahulu untuk melanjutkan. 😊`,
+        buttons: ['OK'],
+        cssClass: 'elegant-alert',
+        backdropDismiss: false,
+      });
+      return await alert.present();
+    }
+
     const alert = await this.alertController.create({
-      header: '💳 Metode Belum Dipilih',
+      header: '✅ Konfirmasi Pembayaran',
       message: `
-        <div class="alert-custom">
-          Silakan pilih metode pembayaran terlebih dahulu untuk melanjutkan. 😊
-        </div>
-      `,
-      buttons: ['OK'],
+        Kamu memilih metode ${this.selected.toUpperCase()}
+        Silakan lakukan pembayaran dan konfirmasi ke driver ya! 🙌
+    `,
+      buttons: [
+        {
+          text: 'Siap!',
+          cssClass: 'alert-button-confirm',
+          handler: () => {
+            this.router.navigate(['/rating'], {
+              queryParams: { order_id: this.orderId }
+            });
+
+          }
+        }
+      ],
       cssClass: 'elegant-alert',
       backdropDismiss: false,
     });
-    return await alert.present();
+
+    await alert.present();
   }
-
-  const alert = await this.alertController.create({
-    header: '✅ Konfirmasi Pembayaran',
-    message: `
-      <div class="alert-custom">
-        Kamu memilih metode <strong>${this.selected.toUpperCase()}</strong>.<br><br>
-        Silakan <strong>lakukan pembayaran</strong> dan <strong>konfirmasi ke driver</strong> ya! 🙌
-      </div>
-    `,
-    buttons: [
-      {
-        text: 'Siap!',
-        cssClass: 'alert-button-confirm',
-        handler: () => {
-          this.router.navigate(['/dasboard']);
-        }
-      }
-    ],
-    cssClass: 'elegant-alert',
-    backdropDismiss: false,
-  });
-
-  await alert.present();
-}
 
 
   getDriverQris(orderId: number) {
@@ -92,7 +91,7 @@ export class PaymentPage implements OnInit {
       return;
     }
 
-    this.http.get<{ foto_qris: string }>(`http://localhost:8000/api/order/${orderId}/driver-qris`, {
+    this.http.get<{ foto_qris: string }>(`${environment.apiUrl}/order/${orderId}/driver-qris`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

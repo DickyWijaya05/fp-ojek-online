@@ -21,21 +21,7 @@ class DriverLocation extends Model
     }
 
 
-    public function getLocation($id)
-    {
-        $location = \App\Models\DriverLocation::where('driver_id', $id)
-            ->latest()
-            ->first();
 
-        if (!$location) {
-            return response()->json(['message' => 'Lokasi tidak ditemukan'], 404);
-        }
-
-        return response()->json([
-            'latitude' => $location->latitude,
-            'longitude' => $location->longitude,
-        ]);
-    }
 
 }
 

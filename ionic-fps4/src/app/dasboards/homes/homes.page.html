@@ -1,8 +1,12 @@
 <ion-header>
   <ion-toolbar style="--background: #ffde59; --color: #000000;">
-    <!-- Toggle status di pojok kanan atas -->
+    <ion-title>Dashboard Driver</ion-title>
     <ion-buttons slot="end">
-      <ion-toggle [(ngModel)]="isOnline" (ionChange)="toggleStatus()" style="margin-right: 8px;"></ion-toggle>
+      <ion-toggle
+        [checked]="isOnline"
+        (ionChange)="toggleStatus($event)"
+        style="margin-right: 8px;">
+      </ion-toggle>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -10,13 +14,16 @@
 <ion-content class="ion-padding custom-background">
   <div class="profile-section">
     <div class="avatar-wrapper">
-      <!-- <ion-avatar></ion-avatar> -->
-      <!-- <img [src]="user?.foto_profil || 'assets/user-placeholder.png'" alt="Foto Driver" /> -->
       <img src='assets/Logo.png' alt="Foto Driver" />
     </div>
 
     <h2>Hallo Driver, {{ user?.name || 'Username' }}</h2>
     <p>Siap Narik Nih??</p>
+    <p>Status:
+      <strong [style.color]="isOnline ? 'green' : 'red'">
+        {{ isOnline ? 'available' : 'offline' }}
+      </strong>
+    </p>
   </div>
 
   <ion-button expand="block" shape="round" class="search-customer-button" (click)="goToLokasi()">

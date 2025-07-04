@@ -25,7 +25,7 @@ class LaporanTransaksiController extends Controller
                 'tanggal' => $trx->created_at->format('d M Y H:i'),
                 'jarak' => $trx->distance ?? 0,
                 'tarif' => $trx->total_price ?? 0,
-                'metode' => 'Cash', // Ganti jika punya kolom metode pembayaran
+                'metode' => ucfirst($trx->metode ?? 'Tunai'),
                 'status' => 'Lunas', // Ganti jika punya kolom status pembayaran
             ];
         });

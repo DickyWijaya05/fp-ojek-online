@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: false,
@@ -61,7 +62,7 @@ export class DocumentDriverPage {
       Authorization: `Bearer ${token}`
     });
 
-    this.http.post('http://localhost:8000/api/driver/documents', formData, { headers })
+    this.http.post(`${environment.apiUrl}/driver/documents`, formData, { headers })
       .subscribe(
         async (response) => {
           console.log('✅ Dokumen berhasil dikirim:', response);

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: false,
@@ -37,7 +38,7 @@ export class AccountsPage implements OnInit {
       return;
     }
 
-    this.http.get('http://localhost:8000/api/driver/profile', {
+    this.http.get(`${environment.apiUrl}/driver/profile`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -64,7 +65,7 @@ export class AccountsPage implements OnInit {
       tanggal_lahir: this.profile.date_of_birth
     };
 
-    this.http.put('http://localhost:8000/api/driver/profile', data, {
+    this.http.put(`${environment.apiUrl}/driver/profile`, data, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -87,7 +88,7 @@ export class AccountsPage implements OnInit {
     const formData = new FormData();
     formData.append('foto_profil', file);
 
-    this.http.post('http://localhost:8000/api/driver/profile/upload-photo', formData, {
+    this.http.post(`${environment.apiUrl}/driver/profile/upload-photo`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -110,7 +111,7 @@ export class AccountsPage implements OnInit {
     const formData = new FormData();
     formData.append('foto_qris', file);
 
-    this.http.post('http://localhost:8000/api/driver/profile/upload-qris', formData, {
+    this.http.post(`${environment.apiUrl}/driver/profile/upload-qris`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -128,8 +129,9 @@ export class AccountsPage implements OnInit {
     this.qrisInput.nativeElement.click();
   }
 
-  logout() {
-    localStorage.removeItem('driver_token');
-    this.router.navigate(['/login']); // arahkan ke halaman login
-  }
+ logout() {
+  localStorage.clear(); // 🔥 Bersihkan SEMUA data di localStorage
+  sessionStorage.clear();
+  this.router.navigate(['/login']); // 🔁 Redirect ke halaman login
+}
 }

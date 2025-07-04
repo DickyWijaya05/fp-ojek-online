@@ -3,6 +3,8 @@ import * as L from 'leaflet';
 import { Geolocation } from '@capacitor/geolocation';
 import axios from 'axios';
 import type { GeoJsonObject } from 'geojson';
+import { environment } from 'src/environments/environment';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   standalone: false,
@@ -23,7 +25,22 @@ export class DriverTrackingPage {
   destinationMarker: L.Marker | undefined;
   routeLine: L.Layer | undefined;
   selectedMethod: string = '';
+  orderPollingInterval: any;
 
+  
+
+
+  constructor(private alertCtrl: AlertController) { }
+
+  async presentAlert(message: string, header: string = 'Informasi') {
+    const alert = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: [{ text: 'OK', cssClass: 'elegant-alert-button' }],
+      cssClass: 'elegant-alert'
+    });
+    await alert.present();
+  }
 
   async ionViewDidEnter() {
     const success = await this.ambilProfilDriver(); // ⬅️ Panggil di awal
@@ -40,8 +57,8 @@ export class DriverTrackingPage {
     }).addTo(this.map);
 
     const driverIcon = L.icon({
-      iconUrl: 'assets/alert-icon.svg',
-      iconSize: [32, 32],
+      iconUrl: 'assets/driver.png',
+      iconSize: [75, 75],
       iconAnchor: [16, 32],
       popupAnchor: [0, -32],
     });
@@ -83,7 +100,7 @@ export class DriverTrackingPage {
     if (!token) { alert('Token tidak ditemukan. Silakan login ulang.'); return; }
 
     try {
-      await axios.post('http://localhost:8000/api/driver-status',
+      await axios.post(`${environment.apiUrl}/driver-status`,
         { status: 'offline' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -96,12 +113,12 @@ export class DriverTrackingPage {
   async simpanLokasi() {
     const token = localStorage.getItem('driver_token');
     if (!token) {
-      alert('Token tidak ditemukan. Silakan login ulang.');
+      this.presentAlert('Token tidak ditemukan. Silakan login ulang.');
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/driver-location',
+      const response = await axios.post(`${environment.apiUrl}/driver-location`,
         {
           latitude: this.currentLat,
           longitude: this.currentLng,
@@ -122,16 +139,16 @@ export class DriverTrackingPage {
   async ambilProfilDriver() {
     const token = localStorage.getItem('driver_token');
     if (!token) {
-      alert('Token tidak ditemukan. Silakan login ulang.');
+      this.presentAlert('Token tidak ditemukan. Silakan login ulang.');
       return false;
     }
 
     try {
-      const res = await axios.get('http://localhost:8000/api/driver/profile', {
+      const res = await axios.get(`${environment.apiUrl}/driver/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      console.log('🧾 Data profil driver:', res.data);
+      console.log('Data profil driver:', res.data);
 
       // Cek jika struktur nested
       this.driverId = res.data.driver?.id ?? res.data.id;
@@ -143,7 +160,7 @@ export class DriverTrackingPage {
       return true;
     } catch (err) {
       console.error('❌ Gagal ambil profile driver:', err);
-      alert('Gagal mengambil data driver. Silakan login ulang.');
+      this.presentAlert('Gagal mengambil data driver. Silakan login ulang.');
       return false;
     }
   }
@@ -154,7 +171,7 @@ export class DriverTrackingPage {
 
     const token = localStorage.getItem('driver_token');
     try {
-      await axios.post(`http://localhost:8000/api/driver/accept-order/${this.incomingOrder.id}`,
+      await axios.post(`${environment.apiUrl}/driver/accept-order/${this.incomingOrder.id}`,
         {
           driver_lat: this.currentLat,
           driver_lng: this.currentLng,
@@ -165,17 +182,17 @@ export class DriverTrackingPage {
       );
 
       // ✅ Kirim status: OTW ke lokasi jemput
-      await axios.post(`http://localhost:8000/api/driver/order-status/${this.incomingOrder.id}`, {
+      await axios.post(`${environment.apiUrl}/driver/order-status/${this.incomingOrder.id}`, {
         status: 'on_the_way'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert('✅ Order berhasil diterima dan status OTW dikirim!');
+      this.presentAlert('Order berhasil diterima dan status OTW dikirim!');
       this.acceptedOrderId = this.incomingOrder.id;
       this.stepStatus = 'accepted';
 
-      const routeRes = await axios.post('http://localhost:8000/api/route', {
+      const routeRes = await axios.post(`${environment.apiUrl}/route`, {
         coordinates: [
           [this.currentLng, this.currentLat], // Driver pos
           [parseFloat(this.incomingOrder.start_lng), parseFloat(this.incomingOrder.start_lat)] // Penumpang pos
@@ -185,12 +202,13 @@ export class DriverTrackingPage {
       const geojson = routeRes.data.route_geojson;
       this.incomingOrder.route_geojson = geojson;
 
-      alert('✅ Order diterima & rute berhasil diambil!');
+      this.presentAlert('Order diterima & rute berhasil diambil!');
       this.showRouteToPickup();
+      this.startPollingOrderStatus();
 
     } catch (err) {
       console.error('❌ Gagal menerima order atau ambil rute:', err);
-      alert('❌ Gagal menerima order.');
+      this.presentAlert('Gagal menerima order.');
     }
   }
 
@@ -236,12 +254,72 @@ export class DriverTrackingPage {
     }
   }
 
+  async cancelOrderByDriver() {
+    if (!this.incomingOrder) return;
+
+    const alert = await this.alertCtrl.create({
+      header: 'Konfirmasi',
+      message: 'Yakin ingin membatalkan order ini?',
+      buttons: [
+        {
+          text: 'Batal',
+          role: 'cancel'
+        },
+        {
+          text: 'Ya, Batalkan',
+          handler: async () => {
+            const token = localStorage.getItem('driver_token');
+            try {
+              await axios.post(`${environment.apiUrl}/order/${this.incomingOrder.id}/cancel`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              this.presentAlert('Order berhasil dibatalkan!');
+              this.resetTracking(); // Reset UI dan map
+            } catch (err) {
+              console.error('❌ Gagal membatalkan order:', err);
+              this.presentAlert('Gagal membatalkan order.');
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
+  startPollingOrderStatus() {
+  const token = localStorage.getItem('driver_token');
+  if (!token || !this.acceptedOrderId) return;
+
+  this.orderPollingInterval = setInterval(async () => {
+    try {
+      const res = await axios.get(`${environment.apiUrl}/order/${this.acceptedOrderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const order = res.data.data;
+
+      // Deteksi jika customer membatalkan
+      if (order.status === 'cancelled_by_customer') {
+        clearInterval(this.orderPollingInterval);
+        this.presentAlert('❌ Customer membatalkan order.');
+        this.resetTracking();
+      }
+
+    } catch (err) {
+      console.error('❌ Gagal polling status order:', err);
+    }
+  }, 3000); // setiap 3 detik
+}
+
+
   async sudahSampaiJemput() {
     if (!this.incomingOrder) return;
 
     const token = localStorage.getItem('driver_token');
     try {
-      await axios.post(`http://localhost:8000/api/driver/order-status/${this.incomingOrder.id}`, {
+      await axios.post(`${environment.apiUrl}/driver/order-status/${this.incomingOrder.id}`, {
         status: 'pickupReached'
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -258,10 +336,10 @@ export class DriverTrackingPage {
         console.warn('Gagal play suara:', err);
       }
 
-      alert('✅ Notifikasi "Sudah Sampai Jemput" dikirim ke penumpang!');
+      this.presentAlert('Notifikasi "Sudah Sampai Jemput" dikirim ke penumpang!');
     } catch (err) {
       console.error('❌ Gagal kirim status pickupReached:', err);
-      alert('❌ Gagal mengirim notifikasi ke penumpang.');
+      this.presentAlert('Gagal mengirim notifikasi ke penumpang.');
     }
   }
 
@@ -276,7 +354,7 @@ export class DriverTrackingPage {
 
     try {
       const token = localStorage.getItem('driver_token');
-      const res = await axios.get(`http://localhost:8000/api/driver/route-to-destination/${orderId}`, {
+      const res = await axios.get(`${environment.apiUrl}/driver/route-to-destination/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -304,7 +382,7 @@ export class DriverTrackingPage {
 
     } catch (error) {
       console.error('❌ Gagal ambil rute ke tujuan:', error);
-      alert('⚠️ Gagal menampilkan rute ke tujuan.');
+      this.presentAlert('Gagal menampilkan rute ke tujuan.');
     }
   }
 
@@ -315,7 +393,7 @@ export class DriverTrackingPage {
     const orderId = this.incomingOrder.id;
 
     try {
-      await axios.post(`http://localhost:8000/api/driver/order-status/${orderId}`, {
+      await axios.post(`${environment.apiUrl}/driver/order-status/${orderId}`, {
         status: 'completed'
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -323,7 +401,7 @@ export class DriverTrackingPage {
 
       console.log('✅ Status Order Di Ubah Ke Komplit');
       this.stepStatus = 'completed';
-      alert('🎉 Perjalanan selesai! Penumpang akan diminta membayar.');
+      this.presentAlert('Perjalanan selesai! Penumpang akan diminta membayar.');
 
     } catch (err) {
       console.error('❌ Gagal kirim notifikasi pembayaran ke pelanggan:', err);
@@ -334,7 +412,7 @@ export class DriverTrackingPage {
     if (!this.incomingOrder) return;
 
     if (!this.selectedMethod) {
-      alert('⚠️ Silakan pilih metode pembayaran terlebih dahulu.');
+      this.presentAlert('Silakan pilih metode pembayaran terlebih dahulu.');
       return;
     }
 
@@ -344,7 +422,7 @@ export class DriverTrackingPage {
       const success = await this.ambilProfilDriver();
       if (!success || !this.driverId) {
 
-        alert('Tidak bisa mendapatkan ID driver. Silakan coba lagi.');
+        this.presentAlert('Tidak bisa mendapatkan ID driver. Silakan coba lagi.');
 
         return;
       }
@@ -361,11 +439,11 @@ export class DriverTrackingPage {
     };
 
     try {
-      await axios.post('http://localhost:8000/api/transactions', payload, {
+      await axios.post(`${environment.apiUrl}/transactions`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert('✅ Transaksi berhasil disimpan!');
+      this.presentAlert('Transaksi berhasil disimpan!');
       console.log('📦 Transaksi dikirim:', payload);
 
       // opsional: resetTracking atau redirect ke halaman lain
@@ -373,7 +451,7 @@ export class DriverTrackingPage {
 
     } catch (err) {
       console.error('❌ Gagal simpan transaksi:', err);
-      alert('Gagal menyimpan transaksi. Silakan coba lagi.');
+      this.presentAlert('Gagal menyimpan transaksi. Silakan coba lagi.');
       console.log('📤 Payload transaksi:', payload);
       console.log('📤 Payload driver_id:', this.driverId);
 
@@ -389,27 +467,8 @@ export class DriverTrackingPage {
     if (this.routeLine) this.map?.removeLayer(this.routeLine);
     if (this.pickupMarker) this.map?.removeLayer(this.pickupMarker);
     if (this.destinationMarker) this.map?.removeLayer(this.destinationMarker);
+    clearInterval(this.orderPollingInterval);
   }
-
-
-  async rejectOrder() {
-    if (!this.incomingOrder) return;
-
-    const token = localStorage.getItem('driver_token');
-    try {
-      await axios.post(`http://localhost:8000/api/driver/reject-order/${this.incomingOrder.id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert('❌ Order ditolak.');
-      this.incomingOrder = null;
-    } catch (err) {
-      alert('⚠️ Gagal menolak order.');
-    }
-  }
-
 
   async loadIncomingOrder() {
     console.log('🕵️ Polling order masuk...');
@@ -421,7 +480,7 @@ export class DriverTrackingPage {
     }
 
     try {
-      const response = await axios.get('http://localhost:8000/api/driver/incoming-order', {
+      const response = await axios.get(`${environment.apiUrl}/driver/incoming-order`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -437,7 +496,7 @@ export class DriverTrackingPage {
         });
 
         if (firstNewOrder) {
-          const audio = new Audio('assets/sound/notif.mp3');
+          const audio = new Audio('assets/sound/order.mp3');
           try {
             await audio.play();
             console.log('🔊 Notifikasi suara diputar');
@@ -460,5 +519,7 @@ export class DriverTrackingPage {
       console.error('❌ Gagal polling order:', err?.response?.data || err.message);
     }
   }
+  
+  
 }
 

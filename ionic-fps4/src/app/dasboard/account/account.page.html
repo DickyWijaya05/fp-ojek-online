@@ -1,14 +1,15 @@
 <ion-content *ngIf="profile" class="ion-padding custom-background" fullscreen>
   <div class="page-container">
 
+    <!-- Judul -->
     <div class="profile-header">
       <h1 class="title">Profile</h1>
     </div>
 
-    <!-- Foto profil + ikon edit -->
+    <!-- Avatar dan Tombol Edit -->
     <div class="avatar-wrapper">
       <ion-avatar class="profile-avatar">
-        <img [src]="profile.foto_profil || 'assets/Profile.png'" alt="profile" />
+        <img [src]="profile.foto_profil || 'assets/Profile.png'" alt="Foto Profil" />
         <ion-button class="edit-icon" fill="solid" size="small" (click)="triggerFileInput()">
           <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
         </ion-button>
@@ -16,21 +17,12 @@
       </ion-avatar>
     </div>
 
-    <!-- Informasi profil -->
+    <!-- Form Profil -->
     <div class="form-section">
-
       <!-- Nama -->
       <ion-label class="form-label">Nama</ion-label>
       <ion-item class="input-item">
-        <ion-input
-          *ngIf="!isEditing"
-          [value]="profile.name"
-          readonly>
-        </ion-input>
-        <ion-input
-          *ngIf="isEditing"
-          [(ngModel)]="profile.name">
-        </ion-input>
+        <ion-input [readonly]="!isEditing" [(ngModel)]="profile.name"></ion-input>
       </ion-item>
 
       <!-- Email -->
@@ -40,33 +32,23 @@
         <ion-input [value]="profile.email" readonly></ion-input>
       </ion-item>
 
-      <!-- Phone -->
+      <!-- No HP -->
       <ion-label class="form-label">Phone Number</ion-label>
-      <ion-item class="input-item phone-input">
+      <ion-item class="input-item">
         <ion-avatar slot="start" class="small-flag">
-          <img src="assets/id.png" alt="id" class="id"/>
+          <img src="assets/id.png" alt="ID" />
         </ion-avatar>
         <ion-icon name="chevron-down-outline" slot="start" class="chevron-icon"></ion-icon>
-        <ion-input
-          *ngIf="!isEditing"
-          [value]="profile.phone"
-          readonly>
-        </ion-input>
-        <ion-input
-          *ngIf="isEditing"
-          [(ngModel)]="profile.phone">
-        </ion-input>
+        <ion-input [readonly]="!isEditing" [(ngModel)]="profile.phone"></ion-input>
       </ion-item>
 
       <!-- Gender -->
       <ion-label class="form-label">Gender</ion-label>
       <ion-item class="input-item">
-        <div *ngIf="!isEditing" class="readonly-gender">
-          {{ profile.gender === 'Male' ? 'Laki-laki' : profile.gender === 'Female' ? 'Perempuan' : '-' }}
-        </div>
-        <ion-select
-          *ngIf="isEditing"
-          [(ngModel)]="profile.gender">
+        <ng-container *ngIf="!isEditing">
+          <ion-label>{{ profile.gender === 'Male' ? 'Laki-laki' : profile.gender === 'Female' ? 'Perempuan' : '-' }}</ion-label>
+        </ng-container>
+        <ion-select *ngIf="isEditing" [(ngModel)]="profile.gender">
           <ion-select-option value="Male">Laki-laki</ion-select-option>
           <ion-select-option value="Female">Perempuan</ion-select-option>
         </ion-select>
@@ -75,32 +57,23 @@
       <!-- Alamat -->
       <ion-label class="form-label">Alamat</ion-label>
       <ion-item class="input-item">
-        <ion-input
-          *ngIf="!isEditing"
-          [value]="profile.address"
-          readonly>
-        </ion-input>
-        <ion-input
-          *ngIf="isEditing"
-          [(ngModel)]="profile.address">
-        </ion-input>
+        <ion-input [readonly]="!isEditing" [(ngModel)]="profile.address"></ion-input>
       </ion-item>
-
     </div>
 
-    <!-- Tombol aksi -->
-    <ion-button expand="block" (click)="isEditing = true" *ngIf="!isEditing">
+    <!-- Tombol Edit / Simpan -->
+    <ion-button expand="block" *ngIf="!isEditing" (click)="isEditing = true">
       Edit Profil
     </ion-button>
 
-    <ion-button expand="block" color="success" (click)="saveProfile()" *ngIf="isEditing">
+    <ion-button expand="block" color="success" *ngIf="isEditing" (click)="saveProfile()">
       Simpan Perubahan
     </ion-button>
+
+    <!-- Logout -->
+    <ion-button expand="block" color="danger" (click)="logout()">
+      <ion-icon slot="start" name="log-out-outline"></ion-icon>
+      Logout
+    </ion-button>
   </div>
-
-  <ion-button expand="block" color="danger" (click)="logout()">
-  <ion-icon slot="start" name="log-out-outline"></ion-icon>
-  Logout
-</ion-button>
-
 </ion-content>

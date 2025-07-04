@@ -31,5 +31,10 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'driver_id');
     }
     
+    public function driverProfile()
+{
+    return $this->belongsTo(\App\Models\Driver::class, 'driver_id');
+}
+
 }
 

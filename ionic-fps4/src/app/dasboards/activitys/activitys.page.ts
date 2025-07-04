@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { format } from 'date-fns';
+import { format } from 'date-fns';import { environment } from 'src/environments/environment';
 
 @Component({
   standalone: false,
@@ -25,7 +25,7 @@ export class ActivitysPage implements OnInit {
   fetchRiwayat() {
     const token = localStorage.getItem('driver_token');
 
-    this.http.get<any>('http://localhost:8000/api/driver/transactions', {
+    this.http.get<any>(`${environment.apiUrl}/driver/transactions`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

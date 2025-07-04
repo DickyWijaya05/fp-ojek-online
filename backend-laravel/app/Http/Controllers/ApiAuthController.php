@@ -32,6 +32,7 @@ class ApiAuthController extends Controller
             'level_id' => $request->level_id,
             'uid' => $uid, // pasti ada// jika dikirim, simpan
             'photo_url' => $request->photo_url ?? null,
+            'status' => 'aktif',
         ]);
 
         $token = $user->createToken('customer-token')->plainTextToken;
@@ -65,6 +66,7 @@ public function registerDriver(Request $request)
         'level_id' => $request->level_id,
         'uid' => $uid,
         'photo_url' => $request->photo_url ?? null,
+        'status' => 'pending',
     ]);
 
     $token = $user->createToken('driver-register')->plainTextToken;
@@ -109,6 +111,20 @@ public function registerDriver(Request $request)
     // Level tidak valid
     if (!in_array($user->level_id, [2, 3])) {
         return response()->json(['message' => 'Level pengguna tidak valid.'], 403);
+    }
+
+    // Jika customer dan status tidak aktif
+if ($user->level_id == 3 && $user->status !== 'aktif') {
+    return response()->json([
+        'message' => 'Akun Anda dinonaktifkan. Silakan hubungi admin.'
+    ], 403);
+}
+
+// Jika driver dan status tidak aktif
+    if ($user->level_id == 2 && $user->status !== 'aktif') {
+        return response()->json([
+            'message' => 'Akun Anda belum aktif. Silakan tunggu verifikasi dari admin.'
+        ], 403);
     }
 
     // Jika customer (level_id = 3), buat entri ke tabel customers jika belum ada
@@ -201,7 +217,8 @@ if ($user) {
         'phone' => $request->phone,
         'photo_url' => $request->photo_url,
         'level_id' => $request->level_id ?? 3, // <- Gunakan level_id dari frontend
-        'password' => null
+        'password' => null,
+        'status' => 'aktif',
     ]);
 }
 
